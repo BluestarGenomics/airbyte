@@ -1,0 +1,183 @@
+{
+    "streams": [
+        {
+            "stream": {
+                "name": "studies",
+                "json_schema": {
+                    "type": "object",
+                    "properties": {
+                        "features": {
+                            "type": "object"
+                        },
+                        "instanceId": {
+                            "type": "integer"
+                        },
+                        "isApiAccessAllowed": {
+                            "type": "boolean"
+                        },
+                        "isEPro": {
+                            "type": "boolean"
+                        },
+                        "region": {
+                            "type": "string"
+                        },
+                        "studyId": {
+                            "type": "string"
+                        },
+                        "title": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "supported_sync_modes": [
+                    "full_refresh"
+                ],
+                "source_defined_primary_key": [
+                    [
+                        "studyId"
+                    ]
+                ]
+            },
+            "sync_mode": "full_refresh",
+            "destination_sync_mode": "overwrite"
+        },
+        {
+            "stream": {
+                "name": "clinical_data",
+                "json_schema": {
+                    "type": "object",
+                    "properties": {
+                        "GlobalDatumId": {
+                            "type": "string"
+                        },
+                        "Site": {
+                            "type": "string"
+                        },
+                        "Group": {
+                            "type": "string"
+                        },
+                        "MedrioId": {
+                            "type": "string"
+                        },
+                        "SubjectId": {
+                            "type": "string"
+                        },
+                        "SubjectStatus": {
+                            "type": "string"
+                        },
+                        "IsEPROEmailPHI": {
+                            "type": "string"
+                        },
+                        "Visit": {
+                            "type": "string"
+                        },
+                        "IsUnscheduled": {
+                            "type": "string"
+                        },
+                        "Form": {
+                            "type": "string"
+                        },
+                        "FormCompletionStatus": {
+                            "type": "string"
+                        },
+                        "VariableName": {
+                            "type": "string"
+                        },
+                        "SASLabel": {
+                            "type": "string"
+                        },
+                        "VariableDescription": {
+                            "type": "string"
+                        },
+                        "ExportName": {
+                            "type": "string"
+                        },
+                        "ExternalID": {
+                            "type": "string"
+                        },
+                        "VariableText": {
+                            "type": "string"
+                        },
+                        "Value": {
+                            "type": "string"
+                        },
+                        "Unit": {
+                            "type": "string"
+                        },
+                        "RowNumber": {
+                            "type": "string"
+                        },
+                        "EntryDate": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "EntryUserName": {
+                            "type": "string"
+                        },
+                        "EntryFirstName": {
+                            "type": "string"
+                        },
+                        "EntryLastName": {
+                            "type": "string"
+                        },
+                        "FirstSaveUserName": {
+                            "type": "string"
+                        },
+                        "FirstSaveFirstName": {
+                            "type": "string"
+                        },
+                        "FirstSaveLastName": {
+                            "type": "string"
+                        },
+                        "FirstSaveIsPHI": {
+                            "type": "string"
+                        },
+                        "FormFirstSave": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "FormLastSave": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "Source": {
+                            "type": "string"
+                        },
+                        "CustomerID": {
+                            "type": "string"
+                        },
+                        "GlobalStudyId": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "supported_sync_modes": [
+                    "full_refresh",
+                    "incremental"
+                ],
+                "default_cursor_field": [
+                    "FormLastSave"
+                ],
+                "source_defined_primary_key": [
+                    [
+                        "GlobalDatumId"
+                    ]
+                ]
+            },
+            "sync_mode": "incremental",
+            "destination_sync_mode": "overwrite",
+            "cursor_field": [
+                "FormLastSave"
+            ]
+        }
+    ]
+}

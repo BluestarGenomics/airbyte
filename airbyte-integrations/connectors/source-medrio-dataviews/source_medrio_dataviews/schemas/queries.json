@@ -1,0 +1,99 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "GlobalQueryId": {
+            "type": "string"
+        },
+        "Study": {
+            "type": "string"
+        },
+        "Site": {
+            "type": "string"
+        },
+        "Group": {
+            "type": "string"
+        },
+        "MedrioID": {
+            "type": "string"
+        },
+        "SubjectID": {
+            "type": "string"
+        },
+        "Visit": {
+            "type": "string"
+        },
+        "VisitRepeatLabel": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "Form": {
+            "type": "string"
+        },
+        "FormRepeatLabel": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "VariableName": {
+            "type": "string"
+        },
+        "VariableText": {
+            "type": "string"
+        },
+        "RowNumber": {
+            "type": "string"
+        },
+        "QueryId": {
+            "type": "string"
+        },
+        "QueryType": {
+            "type": "string"
+        },
+        "QueryDesignation": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "QueryStatus": {
+            "type": "string"
+        },
+        "QueryDescription": {
+            "type": "string"
+        },
+        "LastUpdatedTimestamp": {
+            "type": "datetime"
+        },
+        "OpenTimestamp": {
+            "type": "datetime"
+        },
+        "OpenedBy": {
+            "type": "string"
+        },
+        "CloseTimestamp": {
+            "type": "datetime"
+        },
+        "ClosedBy": {
+            "type": "string"
+        },
+        "ReasonForClosing": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "ResponseCount": {
+            "type": "string"
+        },
+        "CustomerID": {
+            "type": "string"
+        },
+        "GlobalStudyId": {
+            "type": "string"
+        }
+    }
+}

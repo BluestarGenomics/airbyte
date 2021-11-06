@@ -1,0 +1,154 @@
+{
+    "streams": [
+        {
+            "stream": {
+                "name": "studies",
+                "json_schema": {
+                    "type": "object",
+                    "properties": {
+                        "features": {
+                            "type": "object"
+                        },
+                        "instanceId": {
+                            "type": "integer"
+                        },
+                        "isApiAccessAllowed": {
+                            "type": "boolean"
+                        },
+                        "isEPro": {
+                            "type": "boolean"
+                        },
+                        "region": {
+                            "type": "string"
+                        },
+                        "studyId": {
+                            "type": "string"
+                        },
+                        "title": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "supported_sync_modes": [
+                    "full_refresh"
+                ],
+                "source_defined_primary_key": [
+                    [
+                        "studyId"
+                    ]
+                ]
+            },
+            "sync_mode": "full_refresh",
+            "destination_sync_mode": "overwrite"
+        },
+        {
+            "stream": {
+                "name": "queries",
+                "json_schema": {
+                    "type": "object",
+                    "properties": {
+                        "GlobalQueryId": {
+                            "type": "string"
+                        },
+                        "Study": {
+                            "type": "string"
+                        },
+                        "Site": {
+                            "type": "string"
+                        },
+                        "Group": {
+                            "type": "string"
+                        },
+                        "MedrioID": {
+                            "type": "string"
+                        },
+                        "SubjectID": {
+                            "type": "string"
+                        },
+                        "Visit": {
+                            "type": "string"
+                        },
+                        "VisitRepeatLabel": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "Form": {
+                            "type": "string"
+                        },
+                        "FormRepeatLabel": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "VariableName": {
+                            "type": "string"
+                        },
+                        "VariableText": {
+                            "type": "string"
+                        },
+                        "RowNumber": {
+                            "type": "string"
+                        },
+                        "QueryId": {
+                            "type": "string"
+                        },
+                        "QueryType": {
+                            "type": "string"
+                        },
+                        "QueryDesignation": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "QueryStatus": {
+                            "type": "string"
+                        },
+                        "QueryDescription": {
+                            "type": "string"
+                        },
+                        "LastUpdatedTimestamp": {
+                            "type": "datetime"
+                        },
+                        "OpenTimestamp": {
+                            "type": "datetime"
+                        },
+                        "OpenedBy": {
+                            "type": "string"
+                        },
+                        "CloseTimestamp": {
+                            "type": "datetime"
+                        },
+                        "ClosedBy": {
+                            "type": "string"
+                        },
+                        "ReasonForClosing": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "ResponseCount": {
+                            "type": "string"
+                        },
+                        "CustomerID": {
+                            "type": "string"
+                        },
+                        "GlobalStudyId": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "supported_sync_modes": [
+                    "full_refresh",
+                    "incremental"
+                ]
+            },
+            "sync_mode": "incremental",
+            "destination_sync_mode": "overwrite"
+        }
+    ]
+}

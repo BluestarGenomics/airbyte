@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "features": {
+      "type": "object"
+    },
+    "instanceId": {
+      "type": "integer"
+    },
+    "isApiAccessAllowed": {
+      "type": "boolean"
+    },
+    "isEPro": {
+      "type": "boolean"
+    },
+    "region": {
+      "type": "string"
+    },
+    "studyId": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    }
+  }
+}
