@@ -111,16 +111,19 @@
                             "type": "string"
                         },
                         "LastUpdatedTimestamp": {
-                            "type": "datetime"
+                            "type": "string",
+                            "format": "date-time"
                         },
                         "OpenTimestamp": {
-                            "type": "datetime"
+                            "type": "string",
+                            "format": "date-time"
                         },
                         "OpenedBy": {
                             "type": "string"
                         },
                         "CloseTimestamp": {
-                            "type": "datetime"
+                            "type": "string",
+                            "format": "date-time"
                         },
                         "ClosedBy": {
                             "type": "string"
