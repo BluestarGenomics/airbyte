@@ -192,6 +192,15 @@ class Queries(MedrioV2StreamIncremental):
         return "QueryReports"
 
 
+class ClinicalData(MedrioV2StreamIncremental):
+    primary_key = "GlobalDatumId"
+
+    cursor_field = "FormLastSave"
+
+    def path(self, **kwargs) -> str:
+        return "ClinicalDataReports"
+
+
 class DataAudit(MedrioV2StreamIncremental):
     primary_key = "GlobalDatumId"
     cursor_field = "DataEntryUtcDateVal"
