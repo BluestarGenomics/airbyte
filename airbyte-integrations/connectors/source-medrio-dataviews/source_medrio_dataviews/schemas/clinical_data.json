@@ -21,13 +21,13 @@
             "type": "string"
         },
         "IsEPROEmailPHI": {
-            "type": "string"
+            "type": "boolean"
         },
         "Visit": {
             "type": "string"
         },
         "IsUnscheduled": {
-            "type": "string"
+            "type": "boolean"
         },
         "Form": {
             "type": "string"
@@ -88,7 +88,7 @@
             "type": "string"
         },
         "FirstSaveIsPHI": {
-            "type": "string"
+            "type": "boolean"
         },
         "FormFirstSave": {
             "type": [

@@ -10,7 +10,7 @@ from airbyte_cdk.sources.streams import Stream
 from airbyte_cdk.sources.streams.http import HttpStream
 from airbyte_cdk.sources.streams.http.requests_native_auth import TokenAuthenticator
 from requests.api import request
-from source_medrio_dataviews.streams import Studies, Queries
+from source_medrio_dataviews.streams import Studies, Queries, ClinicalData
 
 logger = AirbyteLogger()
 
@@ -51,4 +51,8 @@ class SourceMedrioDataviews(AbstractSource):
     def streams(self, config: Mapping[str, Any]) -> List[Stream]:
         auth_v1 = self.get_token(config, "v1")
         auth_v2 = self.get_token(config, "v2")
-        return [Studies(authenticator=auth_v1), Queries(authenticator=auth_v2)]
+        return [
+            Studies(authenticator=auth_v1),
+            Queries(authenticator=auth_v2),
+            ClinicalData(authenticator=auth_v2),
+        ]

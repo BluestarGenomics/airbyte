@@ -162,3 +162,12 @@ class Queries(IncrementalMedrioV2Stream):
 
     def path(self, **kwargs) -> str:
         return "QueryReports"
+
+
+class ClinicalData(IncrementalMedrioV2Stream):
+    primary_key = "GlobalDatumId"
+
+    cursor_field = "FormLastSave"
+
+    def path(self, **kwargs) -> str:
+        return "ClinicalDataReports"
