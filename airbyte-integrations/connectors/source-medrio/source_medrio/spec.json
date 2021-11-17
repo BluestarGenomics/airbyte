@@ -1,0 +1,35 @@
+{
+  "documentationUrl": "https://medrio-docs.atlassian.net/wiki/spaces/MD/pages/462981/Medrio+API+Connect",
+  "connectionSpecification": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Medrio Spec",
+    "type": "object",
+    "required": [
+      "api_user_name",
+      "api_user_password",
+      "enterprise_api_key",
+      "included_studies_list"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "api_user_name": {
+        "type": "string",
+        "description": "The username for your Medrio api user."
+      },
+      "api_user_password": {
+        "type": "string",
+        "description": "The password for your Medrio api user.",
+        "airbyte_secret": true
+      },
+      "enterprise_api_key": {
+        "type": "string",
+        "description": "An API key with Enterprise-level access.",
+        "airbyte_secret": true
+      },
+      "included_studies_list": {
+        "type": "array",
+        "description": "An array of Medrio Global Study IDs to include."
+      }
+    }
+  }
+}

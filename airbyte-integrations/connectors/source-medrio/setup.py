@@ -16,8 +16,8 @@ TEST_REQUIREMENTS = [
 ]
 
 setup(
-    name="source_medrio_dataviews",
-    description="Source implementation for Medrio Dataviews.",
+    name="source_medrio",
+    description="Source implementation for Medrio.",
     author="Airbyte",
     author_email="contact@airbyte.io",
     packages=find_packages(),

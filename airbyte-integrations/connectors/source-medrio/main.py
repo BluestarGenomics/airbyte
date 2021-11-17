@@ -6,8 +6,8 @@
 import sys
 
 from airbyte_cdk.entrypoint import launch
-from source_medrio_dataviews import SourceMedrioDataviews
+from source_medrio import SourceMedrio
 
 if __name__ == "__main__":
-    source = SourceMedrioDataviews()
+    source = SourceMedrio()
     launch(source, sys.argv[1:])

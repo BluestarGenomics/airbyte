@@ -1,21 +1,19 @@
 from abc import ABC
 from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple
-from urllib.parse import urlparse, parse_qs
 
-import logging
 import requests
 from airbyte_cdk.logger import AirbyteLogger
+from airbyte_cdk.models import AirbyteMessage, AirbyteCatalog, ConfiguredAirbyteCatalog
 from airbyte_cdk.sources import AbstractSource
 from airbyte_cdk.sources.streams import Stream
-from airbyte_cdk.sources.streams.http import HttpStream
 from airbyte_cdk.sources.streams.http.requests_native_auth import TokenAuthenticator
 from requests.api import request
-from source_medrio_dataviews.streams import Studies, Queries, ClinicalData
+from .streams import Studies, Queries, ClinicalData
 
 logger = AirbyteLogger()
 
 # Source
-class SourceMedrioDataviews(AbstractSource):
+class SourceMedrio(AbstractSource):
     def check_connection(self, logger, config) -> Tuple[bool, any]:
         try:
             self.get_token(config, "v1")
@@ -48,11 +46,25 @@ class SourceMedrioDataviews(AbstractSource):
         else:
             raise RuntimeError(response.json().get("message"))
 
+    def discover(
+        self, logger: AirbyteLogger, config: Mapping[str, Any]
+    ) -> AirbyteCatalog:
+        return super().discover(logger, config)
+
+    def read(
+        self,
+        logger: AirbyteLogger,
+        config: Mapping[str, Any],
+        catalog: ConfiguredAirbyteCatalog,
+        state: MutableMapping[str, Any] = None,
+    ) -> Iterable[AirbyteMessage]:
+        return super().read(logger, config, catalog, state=state)
+
     def streams(self, config: Mapping[str, Any]) -> List[Stream]:
         auth_v1 = self.get_token(config, "v1")
         auth_v2 = self.get_token(config, "v2")
         return [
             Studies(authenticator=auth_v1),
             Queries(authenticator=auth_v2),
-            ClinicalData(authenticator=auth_v2),
         ]
+

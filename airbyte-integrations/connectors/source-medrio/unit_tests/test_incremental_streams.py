@@ -5,7 +5,7 @@
 
 from airbyte_cdk.models import SyncMode
 from pytest import fixture
-from source_medrio_dataviews.streams import IncrementalMedrioV2Stream
+from source_medrio.streams import IncrementalMedrioV2Stream
 
 
 @fixture

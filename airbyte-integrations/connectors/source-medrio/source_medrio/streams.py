@@ -33,7 +33,7 @@ logger = AirbyteLogger()
 
 
 # Basic full refresh stream
-class MedrioBaseStream(HttpStream, ABC):
+class MedrioHttpStream(HttpStream, ABC):
     url_base = "https://connectapi.medrio.com/"
 
     def __init__(self, **kwargs):
@@ -57,7 +57,19 @@ class MedrioBaseStream(HttpStream, ABC):
         yield from response_json.get("value", [])
 
 
-class MedrioV1Stream(MedrioBaseStream):
+class MedrioExportFileStream(Stream):
+    url_base = "https://na13.api.medrio.com/v1/MedrioServiceV1.svc/"
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def get_json_schema(self):
+        schema = super().get_json_schema()
+        schema["dynamically_determined_property"] = "property"
+        return schema
+
+
+class MedrioV1Stream(MedrioHttpStream):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.url_base = self.url_base + "api/v1/"
@@ -70,7 +82,7 @@ class MedrioV1Stream(MedrioBaseStream):
         return None
 
 
-class MedrioV2Stream(MedrioBaseStream):
+class MedrioV2Stream(MedrioHttpStream):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.url_base = self.url_base + "dataview/api/v2/customer/"
@@ -121,7 +133,6 @@ class Studies(MedrioV1Stream):
 # Basic incremental stream
 class IncrementalMedrioV2Stream(MedrioV2Stream, ABC):
 
-    # TODO: Fill in to checkpoint stream reads after N records. This prevents re-reading of data if the stream fails for any reason.
     state_checkpoint_interval = 10000
 
     @property

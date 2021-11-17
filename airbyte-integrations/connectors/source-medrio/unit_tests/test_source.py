@@ -4,7 +4,7 @@
 
 from unittest.mock import MagicMock
 
-from source_medrio_dataviews.source import SourceMedrioDataviews
+from source_medrio.source import SourceMedrioDataviews
 
 
 def test_check_connection(mocker):

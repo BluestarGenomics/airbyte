@@ -5,7 +5,7 @@ plugins {
 }
 
 airbytePython {
-    moduleDirectory 'source_medrio_dataviews'
+    moduleDirectory 'source_medrio'
 }
 
 dependencies {

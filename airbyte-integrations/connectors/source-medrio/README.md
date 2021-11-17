@@ -1,7 +1,7 @@
-# Medrio Dataviews Source
+# Medrio Source
 
-This is the repository for the Medrio Dataviews source connector, written in Python.
-For information about how to use this connector within Airbyte, see [the documentation](https://docs.airbyte.io/integrations/sources/medrio-dataviews).
+This is the repository for the Medrio source connector, written in Python.
+For information about how to use this connector within Airbyte, see [the documentation](https://docs.airbyte.io/integrations/sources/medrio).
 
 ## Local development
 
@@ -35,7 +35,7 @@ You can also build the connector in Gradle. This is typically used in CI and not
 
 To build using Gradle, from the Airbyte repository root, run:
 ```
-./gradlew :airbyte-integrations:connectors:source-medrio-dataviews:build
+./gradlew :airbyte-integrations:connectors:source-medrio:build
 ```
 
 #### Create credentials
