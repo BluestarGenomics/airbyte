@@ -10,15 +10,6 @@ from typing import Union
 
 logger = AirbyteLogger()
 
-url = "https://na13.api.medrio.com/v1/MedrioServiceV1.svc/Customers/***REMOVED***/Studies/***REMOVED***/Jobs/ExportODM"
-
-payload = '<ExportODM xmlns:i="http://www.w3.org/2001/XMLSchema-instance">\n<ContentType>ConfigOnly</ContentType>\n</ExportODM>'
-headers = {
-    "Content-Type": "application/xml",
-}
-
-response = requests.request("POST", url, headers=headers, data=payload)
-
 
 class MedrioApi:
     def __init__(self, api_key) -> None:
