@@ -66,6 +66,16 @@ class MedrioHttpStream(HttpStream, ABC):
 class MedrioV1Stream(MedrioHttpStream):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+    def get_json_schema(self):
+        schema = super().get_json_schema()
+        schema["dynamically_determined_property"] = "property"
+        return schema
+
+
+class MedrioV1Stream(MedrioHttpStream):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.url_base = self.url_base + "api/v1/"
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
