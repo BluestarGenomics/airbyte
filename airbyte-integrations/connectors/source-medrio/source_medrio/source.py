@@ -91,4 +91,3 @@ class SourceMedrio(AbstractSource):
             ApprovalEvent(authenticator=auth_v2),
             FormStatus(authenticator=auth_v2),
         ]
-

@@ -205,10 +205,17 @@ class Queries(MedrioV2StreamIncremental):
 class ClinicalData(MedrioV2StreamIncremental):
     primary_key = "GlobalDatumId"
 
-    cursor_field = "FormLastSave"
+    def __init__(self, api: MedrioOdmApi, study_id: str, **kwargs):
+        self.api = api
+        self.study_id = study_id
+        super().__init__(**kwargs)
 
-    def path(self, **kwargs) -> str:
-        return "ClinicalDataReports"
+    def get_json_schema(self):
+        self.name = "odm_clinical"  # change just to get shared json_schema
+        schema = super().get_json_schema()
+        schema["properties"].update(self.extra_schema)
+        self.name = self.stream_name  # change name back now that we've got schema
+        return schema
 
 
 class DataAudit(MedrioV2StreamIncremental):
