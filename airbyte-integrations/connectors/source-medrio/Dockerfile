@@ -7,7 +7,7 @@ WORKDIR /airbyte/integration_code
 # upgrade pip to the latest version
 RUN apk --no-cache upgrade \
     && pip install --upgrade pip \
-    && apk --no-cache add tzdata build-base
+    && apk --no-cache add tzdata build-base g++ gcc libxslt-dev
 
 
 COPY setup.py ./
@@ -23,6 +23,12 @@ COPY --from=builder /install /usr/local
 # add default timezone settings
 COPY --from=builder /usr/share/zoneinfo/Etc/UTC /etc/localtime
 RUN echo "Etc/UTC" > /etc/timezone
+# lxml dependencies
+COPY --from=builder /usr/lib/libxslt.so.1 /usr/lib/libxslt.so.1
+COPY --from=builder /usr/lib/libexslt.so.0 /usr/lib/libexslt.so.0
+COPY --from=builder /usr/lib/libxml2.so.2 /usr/lib/libxml2.so.2
+COPY --from=builder /usr/lib/libgcrypt.so.20 /usr/lib/libgcrypt.so.20
+COPY --from=builder /usr/lib/libgpg-error.so.0 /usr/lib/libgpg-error.so.0
 
 # bash is installed for more convenient debugging.
 RUN apk --no-cache add bash

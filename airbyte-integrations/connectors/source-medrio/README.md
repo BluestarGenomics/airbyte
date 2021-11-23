@@ -60,12 +60,30 @@ python main.py read --config secrets/config.json --catalog integration_tests/con
 #### Build
 First, make sure you build the latest Docker image:
 ```
-docker build . -t airbyte/source-medrio-dataviews:dev
+docker buildx build . \
+    --platform "linux/amd64,linux/arm64" \
+    --tag 878324840923.dkr.ecr.us-east-1.amazonaws.com/airbyte/source-medrio:dev \
+    --push &
+
+docker buildx build . \
+    --platform "linux/amd64" \
+    --tag 878324840923.dkr.ecr.us-east-1.amazonaws.com/airbyte/source-medrio:dev-amd \
+    --push &
+
+docker buildx build . \
+    --platform "linux/arm64" \
+    --tag 878324840923.dkr.ecr.us-east-1.amazonaws.com/airbyte/source-medrio:dev-arm \
+    --push &
+
+docker buildx build . \
+    --platform "linux/arm64" \
+    --tag 878324840923.dkr.ecr.us-east-1.amazonaws.com/airbyte/source-medrio:dev \
+    --load
 ```
 
 You can also build the connector image via Gradle:
 ```
-./gradlew :airbyte-integrations:connectors:source-medrio-dataviews:airbyteDocker
+./gradlew :airbyte-integrations:connectors:source-medrio:airbyteDocker
 ```
 When building via Gradle, the docker image name and tag, respectively, are the values of the `io.airbyte.name` and `io.airbyte.version` `LABEL`s in
 the Dockerfile.
@@ -73,10 +91,10 @@ the Dockerfile.
 #### Run
 Then run any of the connector commands as follows:
 ```
-docker run --rm airbyte/source-medrio-dataviews:dev spec
-docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-medrio-dataviews:dev check --config /secrets/config.json
-docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-medrio-dataviews:dev discover --config /secrets/config.json
-docker run --rm -v $(pwd)/secrets:/secrets -v $(pwd)/integration_tests:/integration_tests airbyte/source-medrio-dataviews:dev read --config /secrets/config.json --catalog /integration_tests/configured_catalog.json
+docker run --rm airbyte/source-medrio:dev spec
+docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-medrio:dev check --config /secrets/config.json
+docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-medrio:dev discover --config /secrets/config.json
+docker run --rm -v $(pwd)/secrets:/secrets -v $(pwd)/integration_tests:/integration_tests airbyte/source-medrio:dev read --config /secrets/config.json --catalog /integration_tests/configured_catalog.json
 ```
 ## Testing
 Make sure to familiarize yourself with [pytest test discovery](https://docs.pytest.org/en/latest/goodpractices.html#test-discovery) to know how your test files and methods should be named.
@@ -110,11 +128,11 @@ To run your integration tests with docker
 All commands should be run from airbyte project root.
 To run unit tests:
 ```
-./gradlew :airbyte-integrations:connectors:source-medrio-dataviews:unitTest
+./gradlew :airbyte-integrations:connectors:source-medrio:unitTest
 ```
 To run acceptance and custom integration tests:
 ```
-./gradlew :airbyte-integrations:connectors:source-medrio-dataviews:integrationTest
+./gradlew :airbyte-integrations:connectors:source-medrio:integrationTest
 ```
 
 ## Dependency Management

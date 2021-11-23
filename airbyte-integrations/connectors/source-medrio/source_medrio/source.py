@@ -84,6 +84,6 @@ class SourceMedrio(AbstractSource):
             stream.update_schema(extra_schema={}, stream_name=study_name)
             streams.append(stream)
         return streams + [
-            # Studies(authenticator=auth_v1),
-            # Queries(authenticator=auth_v2),
+            Studies(authenticator=auth_v1),
+            Queries(authenticator=auth_v2),
         ]
