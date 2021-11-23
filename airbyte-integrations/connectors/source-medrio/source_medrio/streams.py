@@ -51,12 +51,6 @@ class MedrioHttpStream(HttpStream, ABC):
             params.update(next_page_token)
         return params
 
-    def parse_response(
-        self, response: requests.Response, **kwargs
-    ) -> Iterable[Mapping]:
-        response_json = response.json()
-        yield from response_json.get("value", [])
-
 
 class MedrioV1Stream(MedrioHttpStream):
     def __init__(self, **kwargs):
@@ -69,6 +63,12 @@ class MedrioV1Stream(MedrioHttpStream):
         # The API does not offer pagination,
         # so we return None to indicate there are no more pages in the response
         return None
+
+    def parse_response(
+        self, response: requests.Response, **kwargs
+    ) -> Iterable[Mapping]:
+        response_json = response.json()
+        yield from response_json.get("response", [])
 
 
 class MedrioV2Stream(MedrioHttpStream):
@@ -94,16 +94,20 @@ class MedrioV2Stream(MedrioHttpStream):
         if decoded_response.get("@odata.nextLink"):
             return parse_qs(urlsplit(decoded_response.get("@odata.nextLink")).query)
 
+    def parse_response(
+        self, response: requests.Response, **kwargs
+    ) -> Iterable[Mapping]:
+        response_json = response.json()
+        yield from response_json.get("value", [])
+
 
 class Studies(MedrioV1Stream):
     primary_key = "studyId"
 
-    def path(
-        self,
-        stream_state: Mapping[str, Any] = None,
-        stream_slice: Mapping[str, Any] = None,
-        next_page_token: Mapping[str, Any] = None,
-    ) -> str:
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def path(self, **kwargs) -> str:
         return "study"
 
 

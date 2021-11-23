@@ -55,6 +55,7 @@ class SourceMedrio(AbstractSource):
         }
         response = requests.post(request_url, headers=headers, data=data)
         if response.json().get("access_token"):
+            logger.info(f"{api_version} token retrieved")
             return TokenAuthenticator(response.json()["access_token"])
         else:
             raise RuntimeError(response.json().get("message"))
