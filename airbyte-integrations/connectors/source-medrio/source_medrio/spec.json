@@ -8,7 +8,7 @@
       "api_user_name",
       "api_user_password",
       "enterprise_api_key",
-      "included_studies_list"
+      "medrio_study_name_array"
     ],
     "additionalProperties": false,
     "properties": {
@@ -26,9 +26,9 @@
         "description": "An API key with Enterprise-level access.",
         "airbyte_secret": true
       },
-      "included_studies_list": {
+      "medrio_study_name_array": {
         "type": "array",
-        "description": "An array of Medrio Global Study IDs to include."
+        "description": "Select Medrio studies to replicate by name."
       }
     }
   }

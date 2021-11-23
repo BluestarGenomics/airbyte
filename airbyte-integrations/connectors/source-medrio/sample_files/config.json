@@ -2,5 +2,7 @@
   "api_user_name": "<api_user>",
   "api_user_password": "<api_password>",
   "enterprise_api_key": "<api_key>",
-  "included_studies_list": "[array,of,studies]"
+  "medrio_study_name_array": [
+    "<study_id>"
+  ]
 }

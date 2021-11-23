@@ -8,9 +8,20 @@ from airbyte_cdk.sources import AbstractSource
 from airbyte_cdk.sources.streams import Stream
 from airbyte_cdk.sources.streams.http.requests_native_auth import TokenAuthenticator
 from requests.api import request
-from .streams import Studies, Queries, ClinicalData
+from .medrio_odm import MedrioOdmApi, MedrioOdmXml
+from .streams import Studies, Queries, MedrioOdm
 
 logger = AirbyteLogger()
+
+medrio_to_airbyte_typing = {
+    "text": {"type": "string"},
+    "partialDate": {"type": ["string"], "format": "date"},
+    "date": {"type": ["string"], "format": "date"},
+    "boolean": {"type": "boolean"},
+    "integer": {"type": "integer"},
+    "float": {"type": "number"},
+    "time": {"type": ["string"], "format": "time"},
+}
 
 # Source
 class SourceMedrio(AbstractSource):
@@ -18,6 +29,8 @@ class SourceMedrio(AbstractSource):
         try:
             self.get_token(config, "v1")
             self.get_token(config, "v2")
+            odm_api = MedrioOdmApi(api_key=config["enterprise_api_key"])
+            studies = odm_api.get_studies()
             return True, None
         except Exception as e:
             return False, str(e)
@@ -63,8 +76,14 @@ class SourceMedrio(AbstractSource):
     def streams(self, config: Mapping[str, Any]) -> List[Stream]:
         auth_v1 = self.get_token(config, "v1")
         auth_v2 = self.get_token(config, "v2")
-        return [
-            Studies(authenticator=auth_v1),
-            Queries(authenticator=auth_v2),
+        odm_api = MedrioOdmApi(api_key=config["enterprise_api_key"])
+        studies = odm_api.get_studies()
+        streams = []
+        for study_name in config["medrio_study_name_array"]:
+            stream = MedrioOdm(api=odm_api, study_id=studies[study_name])
+            stream.update_schema(extra_schema={}, stream_name=study_name)
+            streams.append(stream)
+        return streams + [
+            # Studies(authenticator=auth_v1),
+            # Queries(authenticator=auth_v2),
         ]
-

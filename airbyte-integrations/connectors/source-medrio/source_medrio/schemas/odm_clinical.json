@@ -31,6 +31,9 @@
         },
         "ItemGroupRepeatKey": {
             "type": "string"
+        },
+        "ItemData": {
+            "type": "object"
         }
     }
 }

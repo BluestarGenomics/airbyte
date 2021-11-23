@@ -10,9 +10,10 @@ from urllib.parse import urlparse, parse_qs, urlsplit
 import pendulum
 import requests
 from airbyte_cdk.logger import AirbyteLogger
+from airbyte_cdk.models import SyncMode
 from airbyte_cdk.sources.streams import Stream
 from airbyte_cdk.sources.streams.http import HttpStream
-from airbyte_cdk.sources.streams.http.requests_native_auth import TokenAuthenticator
+from .medrio_odm import MedrioOdmApi, MedrioOdmXml
 
 
 """
@@ -57,18 +58,6 @@ class MedrioHttpStream(HttpStream, ABC):
         yield from response_json.get("value", [])
 
 
-class MedrioExportFileStream(Stream):
-    url_base = "https://na13.api.medrio.com/v1/MedrioServiceV1.svc/"
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    def get_json_schema(self):
-        schema = super().get_json_schema()
-        schema["dynamically_determined_property"] = "property"
-        return schema
-
-
 class MedrioV1Stream(MedrioHttpStream):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -105,12 +94,6 @@ class MedrioV2Stream(MedrioHttpStream):
         if decoded_response.get("@odata.nextLink"):
             return parse_qs(urlsplit(decoded_response.get("@odata.nextLink")).query)
 
-    def parse_response(
-        self, response: requests.Response, **kwargs
-    ) -> Iterable[Mapping]:
-        response_json = response.json()
-        yield from response_json.get("value", [])
-
 
 class Studies(MedrioV1Stream):
     primary_key = "studyId"
@@ -122,12 +105,6 @@ class Studies(MedrioV1Stream):
         next_page_token: Mapping[str, Any] = None,
     ) -> str:
         return "study"
-
-    def parse_response(
-        self, response: requests.Response, **kwargs
-    ) -> Iterable[Mapping]:
-        response_json = response.json()
-        yield from response_json.get("response", [])
 
 
 # Basic incremental stream
@@ -168,17 +145,43 @@ class IncrementalMedrioV2Stream(MedrioV2Stream, ABC):
 
 class Queries(IncrementalMedrioV2Stream):
     primary_key = "GlobalQueryId"
-
     cursor_field = "LastUpdatedTimestamp"
 
     def path(self, **kwargs) -> str:
         return "QueryReports"
 
 
-class ClinicalData(IncrementalMedrioV2Stream):
-    primary_key = "GlobalDatumId"
+class MedrioOdm(Stream):
+    primary_key = ["FormOID", "SubjectKey", "ItemGroupRepeatKey"]
+    cursor_field = "DateTimeStamp"
+    stream_name = None
+    name = "odm_clinical"
 
-    cursor_field = "FormLastSave"
+    def __init__(self, api: MedrioOdmApi, study_id: str, **kwargs):
+        self.api = api
+        self.study_id = study_id
+        super().__init__(**kwargs)
 
-    def path(self, **kwargs) -> str:
-        return "ClinicalDataReports"
+    def get_json_schema(self):
+        self.name = "odm_clinical"  # change just to get shared json_schema
+        schema = super().get_json_schema()
+        schema["properties"].update(self.extra_schema)
+        self.name = self.stream_name  # change name back now that we've got schema
+        return schema
+
+    def update_schema(self, extra_schema: dict, stream_name: str):
+        self.extra_schema = extra_schema
+        self.name = stream_name  # set the name of the schema
+        self.stream_name = stream_name  # capture extra param to keep name
+
+    def read_records(
+        self,
+        sync_mode: SyncMode,
+        cursor_field: List[str] = None,
+        stream_slice: Mapping[str, Any] = None,
+        stream_state: Mapping[str, Any] = None,
+    ) -> Iterable[Mapping[str, Any]]:
+        xml_string = self.api.main(content_type="AllData", study_id=self.study_id)
+        odm_xml = MedrioOdmXml(xml_string)
+        records = odm_xml.parse_clinical()
+        return records
