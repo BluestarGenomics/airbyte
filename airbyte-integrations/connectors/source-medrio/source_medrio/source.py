@@ -1,6 +1,7 @@
 from abc import ABC
 from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple
 
+import copy
 import requests
 from airbyte_cdk.logger import AirbyteLogger
 from airbyte_cdk.models import AirbyteMessage, AirbyteCatalog, ConfiguredAirbyteCatalog
@@ -81,7 +82,7 @@ class SourceMedrio(AbstractSource):
         studies = odm_api.get_studies()
         streams = []
         for study_name in config["medrio_study_name_array"]:
-            stream = MedrioOdm(api=odm_api, study_id=studies[study_name])
+            stream = MedrioOdm(api=copy.deepcopy(odm_api), study_id=studies[study_name])
             stream.update_schema(extra_schema={}, stream_name=study_name)
             streams.append(stream)
         return streams + [

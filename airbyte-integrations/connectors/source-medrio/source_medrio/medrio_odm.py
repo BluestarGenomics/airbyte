@@ -27,13 +27,18 @@ class MedrioOdmApi:
         return xml
 
     def get_studies(self):
-        r = requests.get(
+        response = requests.get(
             url=self.base_url.rstrip("/"),
         )
-        xml = untangle.parse(r.text)
-        studies = {
-            st.Name.cdata: st.ID.cdata for st in xml.MedrioResponse.Records.StudyListing
-        }
+        xml = untangle.parse(response.text)
+        try:
+            studies = {
+                st.Name.cdata: st.ID.cdata
+                for st in xml.MedrioResponse.Records.StudyListing
+            }
+        except AttributeError as e:
+            logger.error(xml.MedrioResponse.Message.cdata)
+            raise
         return studies
 
     def post_job_request(self, content_type: str, study_id: str):
@@ -47,12 +52,12 @@ class MedrioOdmApi:
         headers = {"Content-Type": "application/xml"}
         url = up.urljoin(self.base_url, str(Path(study_id, "Jobs", "ExportODM")))
         logger.info(url)
-        r = requests.post(
+        response = requests.post(
             url=url,
             data=payload,
             headers=headers,
         )
-        xml = untangle.parse(r.text)
+        xml = untangle.parse(response.text)
         message = xml.MedrioResponse.Message.cdata
         if message == "Success":
             response_code = xml.MedrioResponse.Code.cdata
