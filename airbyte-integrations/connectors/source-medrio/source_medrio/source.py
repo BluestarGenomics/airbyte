@@ -10,7 +10,7 @@ from airbyte_cdk.sources.streams import Stream
 from airbyte_cdk.sources.streams.http.requests_native_auth import TokenAuthenticator
 from requests.api import request
 from .medrio_odm import MedrioOdmApi, MedrioOdmXml
-from .streams import Studies, Queries, MedrioOdm
+from .streams import ApprovalEvent, FormStatus, Studies, Queries, MedrioOdm
 
 logger = AirbyteLogger()
 
@@ -88,4 +88,6 @@ class SourceMedrio(AbstractSource):
         return streams + [
             Studies(authenticator=auth_v1),
             Queries(authenticator=auth_v2),
+            ApprovalEvent(authenticator=auth_v2),
+            FormStatus(authenticator=auth_v2),
         ]

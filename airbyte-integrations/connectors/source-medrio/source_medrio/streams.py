@@ -100,18 +100,12 @@ class MedrioV2Stream(MedrioHttpStream):
         response_json = response.json()
         yield from response_json.get("value", [])
 
-
-class Studies(MedrioV1Stream):
-    primary_key = "studyId"
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    def path(self, **kwargs) -> str:
-        return "study"
+    def _create_prepared_request(self, **kwargs):
+        request = super()._create_prepared_request(**kwargs)
+        request.url = (request.url).replace("%24", "$")
+        return request
 
 
-# Basic incremental stream
 class IncrementalMedrioV2Stream(MedrioV2Stream, ABC):
 
     state_checkpoint_interval = 10000
@@ -141,10 +135,32 @@ class IncrementalMedrioV2Stream(MedrioV2Stream, ABC):
         max_cursor = max(pendulum.parse(state_value), pendulum.parse(record_value))
         return {self.cursor_field: str(max_cursor)}
 
-    def _create_prepared_request(self, **kwargs):
-        request = super()._create_prepared_request(**kwargs)
-        request.url = (request.url).replace("%24", "$")
-        return request
+
+# ------------------------------------------------------
+
+
+class Studies(MedrioV1Stream):
+    primary_key = "studyId"
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def path(self, **kwargs) -> str:
+        return "study"
+
+
+class FormStatus(MedrioV2Stream):
+    primary_key = "GlobalCollectionPtID"
+
+    def path(self, **kwargs) -> str:
+        return "FormStatusReports"
+
+
+class ApprovalEvent(MedrioV2Stream):
+    primary_key = "GlobalApprovalEvent_Id"
+
+    def path(self, **kwargs) -> str:
+        return "ApprovalEventReports"
 
 
 class Queries(IncrementalMedrioV2Stream):

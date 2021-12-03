@@ -51,7 +51,6 @@ class MedrioOdmApi:
         </ExportODM>"""
         headers = {"Content-Type": "application/xml"}
         url = up.urljoin(self.base_url, str(Path(study_id, "Jobs", "ExportODM")))
-        logger.info(url)
         response = requests.post(
             url=url,
             data=payload,
@@ -70,7 +69,7 @@ class MedrioOdmApi:
         else:
             logger.error(f"Request failed: {message}")
 
-    @retry(FileNotFoundError, tries=18, delay=2, backoff=2, max_delay=300)
+    @retry(FileNotFoundError, tries=18, delay=2, backoff=2, max_delay=60)
     def get_job_file_url(self, study_id: str):
         if self.job_id is None:
             raise NameError(

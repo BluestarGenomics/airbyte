@@ -1,0 +1,146 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "GlobalCollectionPtID": {
+            "type": "string",
+            "format": "uuid"
+        },
+        "FormLabel": {
+            "type": "string"
+        },
+        "FormCompletionStatus": {
+            "type": "string"
+        },
+        "DDEStatus": {
+            "type": "integer"
+        },
+        "FormDdeStatus": {
+            "type": "string"
+        },
+        "FormHasDataEntered": {
+            "type": "string"
+        },
+        "FormFirstSaveEntryDate": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "FormFirstSaveUsername": {
+            "type": "string"
+        },
+        "FormLastUpdateEntryDate": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "FormLastUpdateUsername": {
+            "type": "string"
+        },
+        "FormIsLocked": {
+            "type": "string"
+        },
+        "FormLockTimestamp": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "FormUnlockTimestamp": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "FormDoubleEntryDate": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date"
+        },
+        "FormIsDoubleEntered": {
+            "type": "number"
+        },
+        "FormDoubleEntryUsername": {
+            "type": "string"
+        },
+        "TotalQueries": {
+            "type": "number"
+        },
+        "OpenQueries": {
+            "type": "number"
+        },
+        "ClosedQueries": {
+            "type": "number"
+        },
+        "RespondedQueries": {
+            "type": "number"
+        },
+        "SiteName": {
+            "type": "string"
+        },
+        "SubjectId": {
+            "type": "string"
+        },
+        "SubjectMedrioId": {
+            "type": "number"
+        },
+        "SubjectStatus": {
+            "type": "string"
+        },
+        "SubjectIsLocked": {
+            "type": "string"
+        },
+        "SubjectLockTimestamp": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "SubjectUnlockTimestamp": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "SubjectVisitIsLocked": {
+            "type": "string"
+        },
+        "SubjectVisitLockTimestamp": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "SubjectVisitUnlockTimestamp": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "VisitLabel": {
+            "type": "string"
+        },
+        "GroupName": {
+            "type": "string"
+        },
+        "CustomerID": {
+            "type": "number"
+        },
+        "GlobalStudyId": {
+            "type": "string",
+            "format": "uuid"
+        }
+    }
+}
