@@ -21,6 +21,7 @@ acceptance_tests_logs/
 # Secrets
 secrets
 !airbyte-integrations/connector-templates/**/secrets
+.envrc
 
 # Test logs
 acceptance_tests_logs

@@ -11,14 +11,6 @@ build : login
     --tag ${LATEST} \
     --push
 	@docker buildx build . \
-    --platform "linux/amd64" \
-    --tag ${LATEST}-amd \
-    --push
-	@docker buildx build . \
-    --platform "linux/arm64" \
-    --tag ${LATEST}-arm \
-    --push
-	@docker buildx build . \
     --platform "linux/arm64" \
     --tag ${LATEST} \
     --load
@@ -28,14 +20,6 @@ dev : login
 	@docker buildx build . \
     --platform "linux/amd64,linux/arm64" \
     --tag ${DEV} \
-    --push
-	@docker buildx build . \
-    --platform "linux/amd64" \
-    --tag ${DEV}-amd \
-    --push
-	@docker buildx build . \
-    --platform "linux/arm64" \
-    --tag ${DEV}-arm \
     --push
 	@docker buildx build . \
     --platform "linux/arm64" \

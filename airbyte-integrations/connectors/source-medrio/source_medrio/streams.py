@@ -4,11 +4,13 @@
 
 
 from abc import ABC
+from http.client import REQUEST_TIMEOUT
 from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple
 from urllib.parse import urlparse, parse_qs, urlsplit
 
 import pendulum
 import requests
+import signal
 from airbyte_cdk.logger import AirbyteLogger
 from airbyte_cdk.models import SyncMode
 from airbyte_cdk.sources.streams import Stream
@@ -32,6 +34,14 @@ There are additional required TODOs in the files within the integration_tests fo
 
 logger = AirbyteLogger()
 
+REQUEST_TIMEOUT = 600  # 10 minutes
+
+
+def timeout_handler(signum, frame):
+    raise requests.exceptions.ReadTimeout(f"Timeout {REQUEST_TIMEOUT} seconds")
+
+
+signal.signal(signal.SIGALRM, timeout_handler)
 
 # Basic full refresh stream
 class MedrioHttpStream(HttpStream, ABC):
@@ -67,6 +77,7 @@ class MedrioV1Stream(MedrioHttpStream):
     def parse_response(
         self, response: requests.Response, **kwargs
     ) -> Iterable[Mapping]:
+        logger.info(f"Parsing response for stream {self.name}")
         response_json = response.json()
         yield from response_json.get("response", [])
 
@@ -97,6 +108,7 @@ class MedrioV2Stream(MedrioHttpStream):
     def parse_response(
         self, response: requests.Response, **kwargs
     ) -> Iterable[Mapping]:
+        logger.info(f"Parsing response for stream {self.name}")
         response_json = response.json()
         yield from response_json.get("value", [])
 
@@ -104,6 +116,20 @@ class MedrioV2Stream(MedrioHttpStream):
         request = super()._create_prepared_request(**kwargs)
         request.url = (request.url).replace("%24", "$")
         return request
+
+    def read_records(self, **kwargs):
+        logger.info(f"Reading records for stream {self.name}")
+        yield from super().read_records(**kwargs)
+
+    def _send_request(
+        self, request: requests.PreparedRequest, request_kwargs: Mapping[str, Any]
+    ) -> requests.Response:
+        try:
+            signal.alarm(REQUEST_TIMEOUT)
+            out = super()._send_request(request, request_kwargs)
+        finally:
+            signal.alarm(0)
+        return out
 
 
 class IncrementalMedrioV2Stream(MedrioV2Stream, ABC):
