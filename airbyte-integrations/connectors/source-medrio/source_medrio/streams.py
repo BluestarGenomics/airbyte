@@ -15,6 +15,7 @@ from airbyte_cdk.logger import AirbyteLogger
 from airbyte_cdk.models import SyncMode
 from airbyte_cdk.sources.streams import Stream
 from airbyte_cdk.sources.streams.http import HttpStream
+from pendulum import DateTime, Period
 from .medrio_odm import MedrioOdmApi, MedrioOdmXml
 
 
@@ -67,16 +68,12 @@ class MedrioV1Stream(MedrioHttpStream):
         super().__init__(**kwargs)
         self.url_base = self.url_base + "api/v1/"
 
-    def next_page_token(
-        self, response: requests.Response
-    ) -> Optional[Mapping[str, Any]]:
+    def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
         # The API does not offer pagination,
         # so we return None to indicate there are no more pages in the response
         return None
 
-    def parse_response(
-        self, response: requests.Response, **kwargs
-    ) -> Iterable[Mapping]:
+    def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
         logger.info(f"Parsing response for stream {self.name}")
         response_json = response.json()
         yield from response_json.get("response", [])
@@ -87,9 +84,7 @@ class MedrioV2Stream(MedrioHttpStream):
         super().__init__(**kwargs)
         self.url_base = self.url_base + "dataview/api/v2/customer/"
 
-    def next_page_token(
-        self, response: requests.Response
-    ) -> Optional[Mapping[str, Any]]:
+    def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
         """
         Get the next pagination link from the Medrio api response and parse out the query parameters.
 
@@ -105,9 +100,7 @@ class MedrioV2Stream(MedrioHttpStream):
         if decoded_response.get("@odata.nextLink"):
             return parse_qs(urlsplit(decoded_response.get("@odata.nextLink")).query)
 
-    def parse_response(
-        self, response: requests.Response, **kwargs
-    ) -> Iterable[Mapping]:
+    def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
         logger.info(f"Parsing response for stream {self.name}")
         response_json = response.json()
         yield from response_json.get("value", [])
@@ -121,9 +114,7 @@ class MedrioV2Stream(MedrioHttpStream):
         logger.info(f"Reading records for stream {self.name}")
         yield from super().read_records(**kwargs)
 
-    def _send_request(
-        self, request: requests.PreparedRequest, request_kwargs: Mapping[str, Any]
-    ) -> requests.Response:
+    def _send_request(self, request: requests.PreparedRequest, request_kwargs: Mapping[str, Any]) -> requests.Response:
         try:
             signal.alarm(REQUEST_TIMEOUT)
             out = super()._send_request(request, request_kwargs)
@@ -132,20 +123,24 @@ class MedrioV2Stream(MedrioHttpStream):
         return out
 
 
-class IncrementalMedrioV2Stream(MedrioV2Stream, ABC):
+# Incremental Streams
+def chunk_date_range(start_date: DateTime, interval=pendulum.duration(days=1)) -> Iterable[Period]:
+    """
+    Yields a list of the beginning and ending timestamps of each day between the start date and now.
+    The return value is a pendulum.period
+    """
+
+    now = pendulum.now()
+    # Each stream_slice contains the beginning and ending timestamp for a 24 hour period
+    while start_date <= now:
+        end_date = start_date + interval
+        yield pendulum.period(start_date, end_date)
+        start_date = end_date
+
+
+class MedrioV2StreamIncremental(MedrioV2Stream, ABC):
 
     state_checkpoint_interval = 10000
-
-    @property
-    def cursor_field(self) -> str:
-        """
-        TODO
-        Override to return the cursor field used by this stream e.g: an API entity might always use created_at as the cursor field. This is
-        usually id or date based. This field's presence tells the framework this in an incremental stream. Required for incremental.
-
-        :return str: The name of the cursor field.
-        """
-        return []
 
     def get_updated_state(
         self,
@@ -189,12 +184,20 @@ class ApprovalEvent(MedrioV2Stream):
         return "ApprovalEventReports"
 
 
-class Queries(IncrementalMedrioV2Stream):
+class Queries(MedrioV2StreamIncremental):
     primary_key = "GlobalQueryId"
     cursor_field = "LastUpdatedTimestamp"
 
     def path(self, **kwargs) -> str:
         return "QueryReports"
+
+
+class DataAudit(MedrioV2StreamIncremental):
+    primary_key = "GlobalDatumId"
+    cursor_field = "DataEntryUtcDateVal"
+
+    def path(self, **kwargs) -> str:
+        return "DataAuditReports"
 
 
 class MedrioOdm(Stream):
