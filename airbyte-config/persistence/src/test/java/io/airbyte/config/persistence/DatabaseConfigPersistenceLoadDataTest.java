@@ -22,14 +22,13 @@ import io.airbyte.config.StandardDestinationDefinition;
 import io.airbyte.config.StandardSourceDefinition;
 import io.airbyte.config.StandardWorkspace;
 import io.airbyte.db.factory.DSLContextFactory;
+import io.airbyte.db.factory.DataSourceFactory;
 import io.airbyte.db.factory.FlywayFactory;
 import io.airbyte.db.instance.configs.ConfigsDatabaseInstance;
 import io.airbyte.db.instance.configs.ConfigsDatabaseMigrator;
 import io.airbyte.db.instance.development.DevDatabaseMigrator;
 import io.airbyte.db.instance.development.MigrationDevHelper;
 import io.airbyte.test.utils.DatabaseConnectionHelper;
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.UUID;
 import org.jooq.DSLContext;
@@ -47,7 +46,8 @@ import org.junit.jupiter.api.TestMethodOrder;
  * Unit test for the {@link DatabaseConfigPersistence#loadData} method.
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DatabaseConfigPersistenceLoadDataTest extends BaseDatabaseConfigPersistenceTest {
+@SuppressWarnings("PMD.SignatureDeclareThrowsException")
+class DatabaseConfigPersistenceLoadDataTest extends BaseDatabaseConfigPersistenceTest {
 
   private final ConfigPersistence seedPersistence = mock(ConfigPersistence.class);
 
@@ -68,11 +68,9 @@ public class DatabaseConfigPersistenceLoadDataTest extends BaseDatabaseConfigPer
   }
 
   @AfterAll
-  public static void tearDown() throws IOException {
+  public static void tearDown() throws Exception {
     dslContext.close();
-    if (dataSource instanceof Closeable closeable) {
-      closeable.close();
-    }
+    DataSourceFactory.close(dataSource);
   }
 
   @BeforeEach
@@ -84,7 +82,7 @@ public class DatabaseConfigPersistenceLoadDataTest extends BaseDatabaseConfigPer
   @Test
   @Order(1)
   @DisplayName("When database is empty, configs should be inserted")
-  public void testUpdateConfigsInNonEmptyDatabase() throws Exception {
+  void testUpdateConfigsInNonEmptyDatabase() throws Exception {
     when(seedPersistence.listConfigs(ConfigSchema.STANDARD_SOURCE_DEFINITION, StandardSourceDefinition.class))
         .thenReturn(Lists.newArrayList(SOURCE_GITHUB));
     when(seedPersistence.listConfigs(ConfigSchema.STANDARD_DESTINATION_DEFINITION, StandardDestinationDefinition.class))
@@ -102,7 +100,7 @@ public class DatabaseConfigPersistenceLoadDataTest extends BaseDatabaseConfigPer
   @Test
   @Order(2)
   @DisplayName("When a connector is in use, its definition should not be updated")
-  public void testNoUpdateForUsedConnector() throws Exception {
+  void testNoUpdateForUsedConnector() throws Exception {
     // the seed has a newer version of s3 destination and github source
     final StandardDestinationDefinition destinationS3V2 = Jsons.clone(DESTINATION_S3).withDockerImageTag("10000.1.0");
     when(seedPersistence.listConfigs(ConfigSchema.STANDARD_DESTINATION_DEFINITION, StandardDestinationDefinition.class))
@@ -140,7 +138,7 @@ public class DatabaseConfigPersistenceLoadDataTest extends BaseDatabaseConfigPer
   @Test
   @Order(3)
   @DisplayName("When a connector is not in use, its definition should be updated")
-  public void testUpdateForUnusedConnector() throws Exception {
+  void testUpdateForUnusedConnector() throws Exception {
     // the seed has a newer version of snowflake destination
     final StandardDestinationDefinition snowflakeV2 = Jsons.clone(DESTINATION_SNOWFLAKE).withDockerImageTag("10000.2.0");
     when(seedPersistence.listConfigs(ConfigSchema.STANDARD_DESTINATION_DEFINITION, StandardDestinationDefinition.class))
