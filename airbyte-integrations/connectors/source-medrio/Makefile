@@ -8,21 +8,23 @@ build : login
 	@echo image=${IMG}
 	@docker buildx build . \
     --platform "linux/amd64,linux/arm64" \
-    --tag ${LATEST} \
+	--tag ${IMG} \
     --push
 	@docker buildx build . \
     --platform "linux/arm64" \
-    --tag ${LATEST} \
+	--tag ${IMG} \
     --load
 
 dev : login
 	@echo image=${IMG}
 	@docker buildx build . \
     --platform "linux/amd64,linux/arm64" \
+	--tag ${IMG} \
     --tag ${DEV} \
     --push
 	@docker buildx build . \
     --platform "linux/arm64" \
+	--tag ${IMG} \
     --tag ${DEV} \
     --load
 

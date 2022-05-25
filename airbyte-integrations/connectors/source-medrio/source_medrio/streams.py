@@ -66,16 +66,6 @@ class MedrioHttpStream(HttpStream, ABC):
 class MedrioV1Stream(MedrioHttpStream):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-    def get_json_schema(self):
-        schema = super().get_json_schema()
-        schema["dynamically_determined_property"] = "property"
-        return schema
-
-
-class MedrioV1Stream(MedrioHttpStream):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
         self.url_base = self.url_base + "api/v1/"
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
@@ -202,61 +192,61 @@ class Queries(MedrioV2StreamIncremental):
         return "QueryReports"
 
 
-class ClinicalData(MedrioV2StreamIncremental):
-    primary_key = "GlobalDatumId"
+# class ClinicalData(MedrioV2StreamIncremental):
+#     primary_key = "GlobalDatumId"
 
-    def __init__(self, api: MedrioOdmApi, study_id: str, **kwargs):
-        self.api = api
-        self.study_id = study_id
-        super().__init__(**kwargs)
+#     def __init__(self, api: MedrioOdmApi, study_id: str, **kwargs):
+#         self.api = api
+#         self.study_id = study_id
+#         super().__init__(**kwargs)
 
-    def get_json_schema(self):
-        self.name = "odm_clinical"  # change just to get shared json_schema
-        schema = super().get_json_schema()
-        schema["properties"].update(self.extra_schema)
-        self.name = self.stream_name  # change name back now that we've got schema
-        return schema
-
-
-class DataAudit(MedrioV2StreamIncremental):
-    primary_key = "GlobalDatumId"
-    cursor_field = "DataEntryUtcDateVal"
-
-    def path(self, **kwargs) -> str:
-        return "DataAuditReports"
+#     def get_json_schema(self):
+#         self.name = "odm_clinical"  # change just to get shared json_schema
+#         schema = super().get_json_schema()
+#         schema["properties"].update(self.extra_schema)
+#         self.name = self.stream_name  # change name back now that we've got schema
+#         return schema
 
 
-class MedrioOdm(Stream):
-    primary_key = ["FormOID", "SubjectKey", "ItemGroupRepeatKey"]
-    cursor_field = "DateTimeStamp"
-    stream_name = None
-    name = "odm_clinical"
+# class DataAudit(MedrioV2StreamIncremental):
+#     primary_key = "GlobalDatumId"
+#     cursor_field = "DataEntryUtcDateVal"
 
-    def __init__(self, api: MedrioOdmApi, study_id: str, **kwargs):
-        self.api = api
-        self.study_id = study_id
-        super().__init__(**kwargs)
+#     def path(self, **kwargs) -> str:
+#         return "DataAuditReports"
 
-    def get_json_schema(self):
-        self.name = "odm_clinical"  # change just to get shared json_schema
-        schema = super().get_json_schema()
-        schema["properties"].update(self.extra_schema)
-        self.name = self.stream_name  # change name back now that we've got schema
-        return schema
 
-    def update_schema(self, extra_schema: dict, stream_name: str):
-        self.extra_schema = extra_schema
-        self.name = stream_name  # set the name of the schema
-        self.stream_name = stream_name  # capture extra param to keep name
+# class MedrioOdm(Stream):
+#     primary_key = ["FormOID", "SubjectKey", "ItemGroupRepeatKey"]
+#     cursor_field = "DateTimeStamp"
+#     stream_name = None
+#     name = "odm_clinical"
 
-    def read_records(
-        self,
-        sync_mode: SyncMode,
-        cursor_field: List[str] = None,
-        stream_slice: Mapping[str, Any] = None,
-        stream_state: Mapping[str, Any] = None,
-    ) -> Iterable[Mapping[str, Any]]:
-        xml_string = self.api.main(content_type="AllData", study_id=self.study_id)
-        odm_xml = MedrioOdmXml(xml_string)
-        records = odm_xml.parse_clinical()
-        return records
+#     def __init__(self, api: MedrioOdmApi, study_id: str, **kwargs):
+#         self.api = api
+#         self.study_id = study_id
+#         super().__init__(**kwargs)
+
+#     def get_json_schema(self):
+#         self.name = "odm_clinical"  # change just to get shared json_schema
+#         schema = super().get_json_schema()
+#         schema["properties"].update(self.extra_schema)
+#         self.name = self.stream_name  # change name back now that we've got schema
+#         return schema
+
+#     def update_schema(self, extra_schema: dict, stream_name: str):
+#         self.extra_schema = extra_schema
+#         self.name = stream_name  # set the name of the schema
+#         self.stream_name = stream_name  # capture extra param to keep name
+
+#     def read_records(
+#         self,
+#         sync_mode: SyncMode,
+#         cursor_field: List[str] = None,
+#         stream_slice: Mapping[str, Any] = None,
+#         stream_state: Mapping[str, Any] = None,
+#     ) -> Iterable[Mapping[str, Any]]:
+#         xml_string = self.api.main(content_type="AllData", study_id=self.study_id)
+#         odm_xml = MedrioOdmXml(xml_string)
+#         records = odm_xml.parse_clinical()
+#         return records

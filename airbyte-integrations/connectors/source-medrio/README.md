@@ -40,7 +40,7 @@ To build using Gradle, from the Airbyte repository root, run:
 
 #### Create credentials
 **If you are a community contributor**, follow the instructions in the [documentation](https://docs.airbyte.io/integrations/sources/medrio-dataviews)
-to generate the necessary credentials. Then create a file `secrets/config.json` conforming to the `source_medrio_dataviews/spec.json` file.
+to generate the necessary credentials. Then create a file `secrets/config.json` conforming to the `source_medrio/spec.json` file.
 Note that any directory named `secrets` is gitignored across the entire Airbyte repo, so there is no danger of accidentally checking in sensitive information.
 See `integration_tests/sample_config.json` for a sample config file.
 
@@ -63,16 +63,6 @@ First, make sure you build the latest Docker image:
 docker buildx build . \
     --platform "linux/amd64,linux/arm64" \
     --tag 878324840923.dkr.ecr.us-east-1.amazonaws.com/airbyte/source-medrio:dev \
-    --push &
-
-docker buildx build . \
-    --platform "linux/amd64" \
-    --tag 878324840923.dkr.ecr.us-east-1.amazonaws.com/airbyte/source-medrio:dev-amd \
-    --push &
-
-docker buildx build . \
-    --platform "linux/arm64" \
-    --tag 878324840923.dkr.ecr.us-east-1.amazonaws.com/airbyte/source-medrio:dev-arm \
     --push &
 
 docker buildx build . \

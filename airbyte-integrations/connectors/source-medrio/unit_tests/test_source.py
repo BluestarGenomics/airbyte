@@ -4,17 +4,17 @@
 
 from unittest.mock import MagicMock
 
-from source_medrio.source import SourceMedrioDataviews
+from source_medrio.source import SourceMedrio
 
 
 def test_check_connection(mocker):
-    source = SourceMedrioDataviews()
+    source = SourceMedrio()
     logger_mock, config_mock = MagicMock(), MagicMock()
     assert source.check_connection(logger_mock, config_mock) == (True, None)
 
 
 def test_streams(mocker):
-    source = SourceMedrioDataviews()
+    source = SourceMedrio()
     config_mock = MagicMock()
     streams = source.streams(config_mock)
     # TODO: replace this with your streams number

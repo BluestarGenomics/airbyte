@@ -9,8 +9,8 @@ from airbyte_cdk.sources import AbstractSource
 from airbyte_cdk.sources.streams import Stream
 from airbyte_cdk.sources.streams.http.requests_native_auth import TokenAuthenticator
 from requests.api import request
-from .medrio_odm import MedrioOdmApi, MedrioOdmXml
-from .streams import ApprovalEvent, FormStatus, Studies, Queries, MedrioOdm
+from .medrio_odm import MedrioOdmApi
+from .streams import ApprovalEvent, FormStatus, Studies, Queries
 
 logger = AirbyteLogger()
 
@@ -44,9 +44,7 @@ class SourceMedrio(AbstractSource):
         if api_version in auth_urls:
             request_url, grant_type = auth_urls.get(api_version)
         else:
-            raise KeyError(
-                f"api_version {api_version} not one of {list(auth_urls.keys())}"
-            )
+            raise KeyError(f"api_version {api_version} not one of {list(auth_urls.keys())}")
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         data = {
             "username": config["api_user_name"],
@@ -61,9 +59,7 @@ class SourceMedrio(AbstractSource):
         else:
             raise RuntimeError(response.json().get("message"))
 
-    def discover(
-        self, logger: AirbyteLogger, config: Mapping[str, Any]
-    ) -> AirbyteCatalog:
+    def discover(self, logger: AirbyteLogger, config: Mapping[str, Any]) -> AirbyteCatalog:
         return super().discover(logger, config)
 
     def read(
@@ -81,10 +77,10 @@ class SourceMedrio(AbstractSource):
         odm_api = MedrioOdmApi(api_key=config["enterprise_api_key"])
         studies = odm_api.get_studies()
         streams = []
-        for study_name in config["medrio_study_name_array"]:
-            stream = MedrioOdm(api=copy.deepcopy(odm_api), study_id=studies[study_name])
-            stream.update_schema(extra_schema={}, stream_name=study_name)
-            streams.append(stream)
+        # for study_name in config["medrio_study_name_array"]:
+        #     stream = MedrioOdm(api=copy.deepcopy(odm_api), study_id=studies[study_name])
+        #     stream.update_schema(extra_schema={}, stream_name=study_name)
+        #     streams.append(stream)
         return streams + [
             Studies(authenticator=auth_v1),
             Queries(authenticator=auth_v2),

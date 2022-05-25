@@ -7,8 +7,7 @@
     "required": [
       "api_user_name",
       "api_user_password",
-      "enterprise_api_key",
-      "medrio_study_name_array"
+      "enterprise_api_key"
     ],
     "additionalProperties": false,
     "properties": {
@@ -28,7 +27,8 @@
       },
       "medrio_study_name_array": {
         "type": "array",
-        "description": "Select Medrio studies to replicate by name."
+        "description": "Select Medrio studies to replicate by name.",
+        "default": []
       }
     }
   }
