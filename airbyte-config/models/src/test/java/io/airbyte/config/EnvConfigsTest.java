@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Airbyte, Inc., all rights reserved.
+ * Copyright (c) 2022 Airbyte, Inc., all rights reserved.
  */
 
 package io.airbyte.config;
@@ -175,6 +175,21 @@ class EnvConfigsTest {
 
     envMap.put(EnvConfigs.TRACKING_STRATEGY, "LOGGING");
     assertEquals(Configs.TrackingStrategy.LOGGING, config.getTrackingStrategy());
+  }
+
+  @Test
+  void testDeploymentMode() {
+    envMap.put(EnvConfigs.DEPLOYMENT_MODE, null);
+    assertEquals(Configs.DeploymentMode.OSS, config.getDeploymentMode());
+
+    envMap.put(EnvConfigs.DEPLOYMENT_MODE, "CLOUD");
+    assertEquals(Configs.DeploymentMode.CLOUD, config.getDeploymentMode());
+
+    envMap.put(EnvConfigs.DEPLOYMENT_MODE, "oss");
+    assertEquals(Configs.DeploymentMode.OSS, config.getDeploymentMode());
+
+    envMap.put(EnvConfigs.DEPLOYMENT_MODE, "OSS");
+    assertEquals(Configs.DeploymentMode.OSS, config.getDeploymentMode());
   }
 
   @Test
