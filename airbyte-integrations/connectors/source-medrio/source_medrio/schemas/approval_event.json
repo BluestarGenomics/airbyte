@@ -1,40 +1,76 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "object",
+    "type": [
+        "null",
+        "object"
+    ],
     "properties": {
         "GlobalApprovalEvent_Id": {
-            "type": "string",
+            "type": [
+                "null",
+                "string"
+            ],
             "format": "uuid"
         },
         "StudyName": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "Site": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "Group": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "MedrioId": {
-            "type": "number"
+            "type": [
+                "null",
+                "number"
+            ]
         },
         "SubjectId": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "Visit": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "Form": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "ApprovalStepName": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "StepOrder": {
-            "type": "number"
+            "type": [
+                "null",
+                "number"
+            ]
         },
         "ApprovalStatus": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "TimeStamp": {
             "type": [
@@ -44,31 +80,58 @@
             "format": "date-time"
         },
         "ApprovalStepCompletion": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "Required_Variables_Approved": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "IsLatest": {
-            "type": "boolean"
+            "type": [
+                "null",
+                "boolean"
+            ]
         },
         "UserMessage": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "FirstName": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "LastName": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "UserName": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "CustomerID": {
-            "type": "number"
+            "type": [
+                "null",
+                "number"
+            ]
         },
         "GlobalStudyId": {
-            "type": "string",
+            "type": [
+                "null",
+                "string"
+            ],
             "format": "uuid"
         }
     }

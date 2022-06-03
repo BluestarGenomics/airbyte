@@ -1,37 +1,18 @@
-#
-# Copyright (c) 2022 Airbyte, Inc., all rights reserved.
-#
-
-
 from abc import ABC
 from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple
 
+import copy
 import requests
 from airbyte_cdk.logger import AirbyteLogger
+from airbyte_cdk.models import AirbyteMessage, AirbyteCatalog, ConfiguredAirbyteCatalog
 from airbyte_cdk.sources import AbstractSource
 from airbyte_cdk.sources.streams import Stream
-from airbyte_cdk.sources.streams.http import HttpStream
-from airbyte_cdk.sources.streams.http.auth import TokenAuthenticator
+from airbyte_cdk.sources.streams.http.requests_native_auth import TokenAuthenticator
+from requests.api import request
 from .medrio_odm import MedrioOdmApi
 from .streams import ApprovalEvent, FormStatus, Studies, Queries
 
-
 logger = AirbyteLogger()
-
-"""
-TODO: Most comments in this class are instructive and should be deleted after the source is implemented.
-
-This file provides a stubbed example of how to use the Airbyte CDK to develop both a source connector which supports full refresh or and an
-incremental syncs from an HTTP API.
-
-The various TODOs are both implementation hints and steps - fulfilling all the TODOs should be sufficient to implement one basic and one incremental
-stream from a source. This pattern is the same one used by Airbyte internally to implement connectors.
-
-The approach here is not authoritative, and devs are free to use their own judgement.
-
-There are additional required TODOs in the files within the integration_tests folder and the spec.yaml file.
-"""
-
 
 medrio_to_airbyte_typing = {
     "text": {"type": "string"},
@@ -77,6 +58,18 @@ class SourceMedrio(AbstractSource):
             return TokenAuthenticator(response.json()["access_token"])
         else:
             raise RuntimeError(response.json().get("message"))
+
+    def discover(self, logger: AirbyteLogger, config: Mapping[str, Any]) -> AirbyteCatalog:
+        return super().discover(logger, config)
+
+    def read(
+        self,
+        logger: AirbyteLogger,
+        config: Mapping[str, Any],
+        catalog: ConfiguredAirbyteCatalog,
+        state: MutableMapping[str, Any] = None,
+    ) -> Iterable[AirbyteMessage]:
+        return super().read(logger, config, catalog, state=state)
 
     def streams(self, config: Mapping[str, Any]) -> List[Stream]:
         auth_v1 = self.get_token(config, "v1")

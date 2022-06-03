@@ -23,7 +23,6 @@ COPY --from=builder /install /usr/local
 # add default timezone settings
 COPY --from=builder /usr/share/zoneinfo/Etc/UTC /etc/localtime
 RUN echo "Etc/UTC" > /etc/timezone
-
 # lxml dependencies
 COPY --from=builder /usr/lib/libxslt.so.1 /usr/lib/libxslt.so.1
 COPY --from=builder /usr/lib/libexslt.so.0 /usr/lib/libexslt.so.0
@@ -41,5 +40,5 @@ COPY source_medrio ./source_medrio
 ENV AIRBYTE_ENTRYPOINT "python /airbyte/integration_code/main.py"
 ENTRYPOINT ["python", "/airbyte/integration_code/main.py"]
 
-LABEL io.airbyte.version=0.1.2
+LABEL io.airbyte.version=0.1.1
 LABEL io.airbyte.name=airbyte/source-medrio

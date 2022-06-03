@@ -1,39 +1,70 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "object",
+    "type": [
+        "null",
+        "object"
+    ],
     "properties": {
         "StudyEventOID": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "SubjectKey": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "GroupOID": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "FormOID": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "TransactionType": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "FormStatus": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "DateTimeStamp": {
             "type": [
+                "null",
                 "string"
             ],
             "format": "date-time"
         },
         "ItemGroupOID": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "ItemGroupRepeatKey": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "ItemData": {
-            "type": "object"
+            "type": [
+                "null",
+                "object"
+            ]
         }
     }
 }

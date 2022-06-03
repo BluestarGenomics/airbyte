@@ -1,0 +1,75 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "GlobalApprovalEvent_Id": {
+            "type": "string",
+            "format": "uuid"
+        },
+        "StudyName": {
+            "type": "string"
+        },
+        "Site": {
+            "type": "string"
+        },
+        "Group": {
+            "type": "string"
+        },
+        "MedrioId": {
+            "type": "number"
+        },
+        "SubjectId": {
+            "type": "string"
+        },
+        "Visit": {
+            "type": "string"
+        },
+        "Form": {
+            "type": "string"
+        },
+        "ApprovalStepName": {
+            "type": "string"
+        },
+        "StepOrder": {
+            "type": "number"
+        },
+        "ApprovalStatus": {
+            "type": "string"
+        },
+        "TimeStamp": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "ApprovalStepCompletion": {
+            "type": "string"
+        },
+        "Required_Variables_Approved": {
+            "type": "string"
+        },
+        "IsLatest": {
+            "type": "boolean"
+        },
+        "UserMessage": {
+            "type": "string"
+        },
+        "FirstName": {
+            "type": "string"
+        },
+        "LastName": {
+            "type": "string"
+        },
+        "UserName": {
+            "type": "string"
+        },
+        "CustomerID": {
+            "type": "number"
+        },
+        "GlobalStudyId": {
+            "type": "string",
+            "format": "uuid"
+        }
+    }
+}

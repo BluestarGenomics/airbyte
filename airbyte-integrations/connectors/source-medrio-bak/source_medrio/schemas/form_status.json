@@ -1,46 +1,25 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": [
-        "null",
-        "object"
-    ],
+    "type": "object",
     "properties": {
         "GlobalCollectionPtID": {
-            "type": [
-                "null",
-                "string"
-            ],
+            "type": "string",
             "format": "uuid"
         },
         "FormLabel": {
-            "type": [
-                "null",
-                "string"
-            ]
+            "type": "string"
         },
         "FormCompletionStatus": {
-            "type": [
-                "null",
-                "string"
-            ]
+            "type": "string"
         },
         "DDEStatus": {
-            "type": [
-                "null",
-                "integer"
-            ]
+            "type": "integer"
         },
         "FormDdeStatus": {
-            "type": [
-                "null",
-                "string"
-            ]
+            "type": "string"
         },
         "FormHasDataEntered": {
-            "type": [
-                "null",
-                "string"
-            ]
+            "type": "string"
         },
         "FormFirstSaveEntryDate": {
             "type": [
@@ -50,10 +29,7 @@
             "format": "date-time"
         },
         "FormFirstSaveUsername": {
-            "type": [
-                "null",
-                "string"
-            ]
+            "type": "string"
         },
         "FormLastUpdateEntryDate": {
             "type": [
@@ -63,16 +39,10 @@
             "format": "date-time"
         },
         "FormLastUpdateUsername": {
-            "type": [
-                "null",
-                "string"
-            ]
+            "type": "string"
         },
         "FormIsLocked": {
-            "type": [
-                "null",
-                "string"
-            ]
+            "type": "string"
         },
         "FormLockTimestamp": {
             "type": [
@@ -96,70 +66,37 @@
             "format": "date-time"
         },
         "FormIsDoubleEntered": {
-            "type": [
-                "null",
-                "number"
-            ]
+            "type": "number"
         },
         "FormDoubleEntryUsername": {
-            "type": [
-                "null",
-                "string"
-            ]
+            "type": "string"
         },
         "TotalQueries": {
-            "type": [
-                "null",
-                "number"
-            ]
+            "type": "number"
         },
         "OpenQueries": {
-            "type": [
-                "null",
-                "number"
-            ]
+            "type": "number"
         },
         "ClosedQueries": {
-            "type": [
-                "null",
-                "number"
-            ]
+            "type": "number"
         },
         "RespondedQueries": {
-            "type": [
-                "null",
-                "number"
-            ]
+            "type": "number"
         },
         "SiteName": {
-            "type": [
-                "null",
-                "string"
-            ]
+            "type": "string"
         },
         "SubjectId": {
-            "type": [
-                "null",
-                "string"
-            ]
+            "type": "string"
         },
         "SubjectMedrioId": {
-            "type": [
-                "null",
-                "number"
-            ]
+            "type": "number"
         },
         "SubjectStatus": {
-            "type": [
-                "null",
-                "string"
-            ]
+            "type": "string"
         },
         "SubjectIsLocked": {
-            "type": [
-                "null",
-                "string"
-            ]
+            "type": "string"
         },
         "SubjectLockTimestamp": {
             "type": [
@@ -176,10 +113,7 @@
             "format": "date-time"
         },
         "SubjectVisitIsLocked": {
-            "type": [
-                "null",
-                "string"
-            ]
+            "type": "string"
         },
         "SubjectVisitLockTimestamp": {
             "type": [
@@ -196,28 +130,16 @@
             "format": "date-time"
         },
         "VisitLabel": {
-            "type": [
-                "null",
-                "string"
-            ]
+            "type": "string"
         },
         "GroupName": {
-            "type": [
-                "null",
-                "string"
-            ]
+            "type": "string"
         },
         "CustomerID": {
-            "type": [
-                "null",
-                "number"
-            ]
+            "type": "number"
         },
         "GlobalStudyId": {
-            "type": [
-                "null",
-                "string"
-            ],
+            "type": "string",
             "format": "uuid"
         }
     }

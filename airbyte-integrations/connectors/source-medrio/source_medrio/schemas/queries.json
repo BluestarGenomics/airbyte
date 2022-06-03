@@ -1,27 +1,51 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "object",
+    "type": [
+        "null",
+        "object"
+    ],
     "properties": {
         "GlobalQueryId": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "Study": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "Site": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "Group": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "MedrioID": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "SubjectID": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "Visit": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "VisitRepeatLabel": {
             "type": [
@@ -30,7 +54,10 @@
             ]
         },
         "Form": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "FormRepeatLabel": {
             "type": [
@@ -39,19 +66,34 @@
             ]
         },
         "VariableName": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "VariableText": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "RowNumber": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "QueryId": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "QueryType": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "QueryDesignation": {
             "type": [
@@ -60,28 +102,49 @@
             ]
         },
         "QueryStatus": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "QueryDescription": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "LastUpdatedTimestamp": {
-            "type": "string",
+            "type": [
+                "null",
+                "string"
+            ],
             "format": "date-time"
         },
         "OpenTimestamp": {
-            "type": "string",
+            "type": [
+                "null",
+                "string"
+            ],
             "format": "date-time"
         },
         "OpenedBy": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "CloseTimestamp": {
-            "type": "string",
+            "type": [
+                "null",
+                "string"
+            ],
             "format": "date-time"
         },
         "ClosedBy": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "ReasonForClosing": {
             "type": [
@@ -90,13 +153,22 @@
             ]
         },
         "ResponseCount": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "CustomerID": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         },
         "GlobalStudyId": {
-            "type": "string"
+            "type": [
+                "null",
+                "string"
+            ]
         }
     }
 }

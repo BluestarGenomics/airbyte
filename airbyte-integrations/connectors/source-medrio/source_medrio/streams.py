@@ -4,7 +4,6 @@
 
 
 from abc import ABC
-from http.client import REQUEST_TIMEOUT
 from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple
 from urllib.parse import urlparse, parse_qs, urlsplit
 
@@ -16,40 +15,13 @@ from airbyte_cdk.models import SyncMode
 from airbyte_cdk.sources.streams import Stream
 from airbyte_cdk.sources.streams.http import HttpStream
 from pendulum import DateTime, Period
-from .medrio_odm import MedrioOdmApi, MedrioOdmXml
-
-
-"""
-TODO: Most comments in this class are instructive and should be deleted after the source is implemented.
-
-This file provides a stubbed example of how to use the Airbyte CDK to develop both a source connector which supports full refresh or and an
-incremental syncs from an HTTP API.
-
-The various TODOs are both implementation hints and steps - fulfilling all the TODOs should be sufficient to implement one basic and one incremental
-stream from a source. This pattern is the same one used by Airbyte internally to implement connectors.
-
-The approach here is not authoritative, and devs are free to use their own judgement.
-
-There are additional required TODOs in the files within the integration_tests folder and the spec.json file.
-"""
 
 logger = AirbyteLogger()
 
-REQUEST_TIMEOUT = 600  # 10 minutes
-
-
-def timeout_handler(signum, frame):
-    raise requests.exceptions.ReadTimeout(f"Timeout {REQUEST_TIMEOUT} seconds")
-
-
-signal.signal(signal.SIGALRM, timeout_handler)
-
+# ------------------------------------------------------
 # Basic full refresh stream
 class MedrioHttpStream(HttpStream, ABC):
     url_base = "https://connectapi.medrio.com/"
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
 
     def request_params(
         self,
@@ -63,6 +35,8 @@ class MedrioHttpStream(HttpStream, ABC):
         return params
 
 
+# ------------------------------------------------------
+# API V1 Streams
 class MedrioV1Stream(MedrioHttpStream):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -79,10 +53,19 @@ class MedrioV1Stream(MedrioHttpStream):
         yield from response_json.get("response", [])
 
 
+class Studies(MedrioV1Stream):
+    primary_key = "studyId"
+
+    def path(self, **kwargs) -> str:
+        return "study"
+
+
+# ------------------------------------------------------
+# API V2 Streams
 class MedrioV2Stream(MedrioHttpStream):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
         self.url_base = self.url_base + "dataview/api/v2/customer/"
+        super().__init__(**kwargs)
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
         """
@@ -114,31 +97,30 @@ class MedrioV2Stream(MedrioHttpStream):
         logger.info(f"Reading records for stream {self.name}")
         yield from super().read_records(**kwargs)
 
-    def _send_request(self, request: requests.PreparedRequest, request_kwargs: Mapping[str, Any]) -> requests.Response:
-        try:
-            signal.alarm(REQUEST_TIMEOUT)
-            out = super()._send_request(request, request_kwargs)
-        finally:
-            signal.alarm(0)
-        return out
+
+class FormStatus(MedrioV2Stream):
+    primary_key = "GlobalCollectionPtID"
+
+    def path(self, **kwargs) -> str:
+        return "FormStatusReports"
 
 
-# Incremental Streams
-def chunk_date_range(start_date: DateTime, interval=pendulum.duration(days=1)) -> Iterable[Period]:
-    """
-    Yields a list of the beginning and ending timestamps of each day between the start date and now.
-    The return value is a pendulum.period
-    """
+class ApprovalEvent(MedrioV2Stream):
+    primary_key = "GlobalApprovalEvent_Id"
 
-    now = pendulum.now()
-    # Each stream_slice contains the beginning and ending timestamp for a 24 hour period
-    while start_date <= now:
-        end_date = start_date + interval
-        yield pendulum.period(start_date, end_date)
-        start_date = end_date
+    def path(self, **kwargs) -> str:
+        return "ApprovalEventReports"
 
 
-class MedrioV2StreamIncremental(MedrioV2Stream, ABC):
+class Queries(MedrioV2Stream):
+    primary_key = "GlobalQueryId"
+    # cursor_field = "LastUpdatedTimestamp"
+
+    def path(self, **kwargs) -> str:
+        return "QueryReports"
+
+
+class MedrioV2StreamIncremental(MedrioV2Stream):
 
     state_checkpoint_interval = 10000
 
@@ -155,98 +137,3 @@ class MedrioV2StreamIncremental(MedrioV2Stream, ABC):
         state_value = current_stream_state.get(self.cursor_field) or record_value
         max_cursor = max(pendulum.parse(state_value), pendulum.parse(record_value))
         return {self.cursor_field: str(max_cursor)}
-
-
-# ------------------------------------------------------
-
-
-class Studies(MedrioV1Stream):
-    primary_key = "studyId"
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    def path(self, **kwargs) -> str:
-        return "study"
-
-
-class FormStatus(MedrioV2Stream):
-    primary_key = "GlobalCollectionPtID"
-
-    def path(self, **kwargs) -> str:
-        return "FormStatusReports"
-
-
-class ApprovalEvent(MedrioV2Stream):
-    primary_key = "GlobalApprovalEvent_Id"
-
-    def path(self, **kwargs) -> str:
-        return "ApprovalEventReports"
-
-
-class Queries(MedrioV2StreamIncremental):
-    primary_key = "GlobalQueryId"
-    cursor_field = "LastUpdatedTimestamp"
-
-    def path(self, **kwargs) -> str:
-        return "QueryReports"
-
-
-# class ClinicalData(MedrioV2StreamIncremental):
-#     primary_key = "GlobalDatumId"
-
-#     def __init__(self, api: MedrioOdmApi, study_id: str, **kwargs):
-#         self.api = api
-#         self.study_id = study_id
-#         super().__init__(**kwargs)
-
-#     def get_json_schema(self):
-#         self.name = "odm_clinical"  # change just to get shared json_schema
-#         schema = super().get_json_schema()
-#         schema["properties"].update(self.extra_schema)
-#         self.name = self.stream_name  # change name back now that we've got schema
-#         return schema
-
-
-# class DataAudit(MedrioV2StreamIncremental):
-#     primary_key = "GlobalDatumId"
-#     cursor_field = "DataEntryUtcDateVal"
-
-#     def path(self, **kwargs) -> str:
-#         return "DataAuditReports"
-
-
-# class MedrioOdm(Stream):
-#     primary_key = ["FormOID", "SubjectKey", "ItemGroupRepeatKey"]
-#     cursor_field = "DateTimeStamp"
-#     stream_name = None
-#     name = "odm_clinical"
-
-#     def __init__(self, api: MedrioOdmApi, study_id: str, **kwargs):
-#         self.api = api
-#         self.study_id = study_id
-#         super().__init__(**kwargs)
-
-#     def get_json_schema(self):
-#         self.name = "odm_clinical"  # change just to get shared json_schema
-#         schema = super().get_json_schema()
-#         schema["properties"].update(self.extra_schema)
-#         self.name = self.stream_name  # change name back now that we've got schema
-#         return schema
-
-#     def update_schema(self, extra_schema: dict, stream_name: str):
-#         self.extra_schema = extra_schema
-#         self.name = stream_name  # set the name of the schema
-#         self.stream_name = stream_name  # capture extra param to keep name
-
-#     def read_records(
-#         self,
-#         sync_mode: SyncMode,
-#         cursor_field: List[str] = None,
-#         stream_slice: Mapping[str, Any] = None,
-#         stream_state: Mapping[str, Any] = None,
-#     ) -> Iterable[Mapping[str, Any]]:
-#         xml_string = self.api.main(content_type="AllData", study_id=self.study_id)
-#         odm_xml = MedrioOdmXml(xml_string)
-#         records = odm_xml.parse_clinical()
-#         return records

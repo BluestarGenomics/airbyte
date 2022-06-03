@@ -1,27 +1,51 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object",
+  "type": [
+    "null",
+    "object"
+  ],
   "properties": {
     "features": {
-      "type": "object"
+      "type": [
+        "null",
+        "object"
+      ]
     },
     "instanceId": {
-      "type": "integer"
+      "type": [
+        "null",
+        "integer"
+      ]
     },
     "isApiAccessAllowed": {
-      "type": "boolean"
+      "type": [
+        "null",
+        "boolean"
+      ]
     },
     "isEPro": {
-      "type": "boolean"
+      "type": [
+        "null",
+        "boolean"
+      ]
     },
     "region": {
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ]
     },
     "studyId": {
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ]
     },
     "title": {
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ]
     }
   }
 }
