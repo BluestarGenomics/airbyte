@@ -23,4 +23,6 @@ connectionSpecification:
     medrio_study_name_array:
       type: array
       description: Select Medrio studies to replicate by name.
+      items:
+        type: string
       default: []
