@@ -1,0 +1,477 @@
+definition_type: connection
+resource_name: Medrio Approval Event
+source_configuration_path: sources/medrio/configuration.yaml
+destination_configuration_path: destinations/snowflake/configuration.yaml
+configuration:
+  sync_catalog:
+    streams:
+    - stream:
+        name: studies
+        json_schema:
+          type:
+          - 'null'
+          - object
+          $schema: http://json-schema.org/draft-07/schema#
+          properties:
+            title:
+              type:
+              - 'null'
+              - string
+            isEPro:
+              type:
+              - 'null'
+              - boolean
+            region:
+              type:
+              - 'null'
+              - string
+            studyId:
+              type:
+              - 'null'
+              - string
+            features:
+              type:
+              - 'null'
+              - object
+            instanceId:
+              type:
+              - 'null'
+              - integer
+            isApiAccessAllowed:
+              type:
+              - 'null'
+              - boolean
+        supported_sync_modes:
+        - full_refresh
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - studyId
+      config:
+        sync_mode: full_refresh
+        destination_sync_mode: append
+        cursor_field: []
+        primary_key:
+        - - studyId
+        alias_name: studies
+        selected: false
+    - stream:
+        name: queries
+        json_schema:
+          type:
+          - 'null'
+          - object
+          $schema: http://json-schema.org/draft-07/schema#
+          properties:
+            Form:
+              type:
+              - 'null'
+              - string
+            Site:
+              type:
+              - 'null'
+              - string
+            Group:
+              type:
+              - 'null'
+              - string
+            Study:
+              type:
+              - 'null'
+              - string
+            Visit:
+              type:
+              - 'null'
+              - string
+            QueryId:
+              type:
+              - 'null'
+              - string
+            ClosedBy:
+              type:
+              - 'null'
+              - string
+            MedrioID:
+              type:
+              - 'null'
+              - string
+            OpenedBy:
+              type:
+              - 'null'
+              - string
+            QueryType:
+              type:
+              - 'null'
+              - string
+            RowNumber:
+              type:
+              - 'null'
+              - string
+            SubjectID:
+              type:
+              - 'null'
+              - string
+            CustomerID:
+              type:
+              - 'null'
+              - string
+            QueryStatus:
+              type:
+              - 'null'
+              - string
+            VariableName:
+              type:
+              - 'null'
+              - string
+            VariableText:
+              type:
+              - 'null'
+              - string
+            GlobalQueryId:
+              type:
+              - 'null'
+              - string
+            GlobalStudyId:
+              type:
+              - 'null'
+              - string
+            OpenTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            ResponseCount:
+              type:
+              - 'null'
+              - string
+            CloseTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            FormRepeatLabel:
+              type:
+              - 'null'
+              - string
+            QueryDescription:
+              type:
+              - 'null'
+              - string
+            QueryDesignation:
+              type:
+              - 'null'
+              - string
+            ReasonForClosing:
+              type:
+              - 'null'
+              - string
+            VisitRepeatLabel:
+              type:
+              - 'null'
+              - string
+            LastUpdatedTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+        supported_sync_modes:
+        - full_refresh
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - GlobalQueryId
+      config:
+        sync_mode: full_refresh
+        destination_sync_mode: append
+        cursor_field: []
+        primary_key:
+        - - GlobalQueryId
+        alias_name: queries
+        selected: false
+    - stream:
+        name: approval_event
+        json_schema:
+          type:
+          - 'null'
+          - object
+          $schema: http://json-schema.org/draft-07/schema#
+          properties:
+            Form:
+              type:
+              - 'null'
+              - string
+            Site:
+              type:
+              - 'null'
+              - string
+            Group:
+              type:
+              - 'null'
+              - string
+            Visit:
+              type:
+              - 'null'
+              - string
+            IsLatest:
+              type:
+              - 'null'
+              - boolean
+            LastName:
+              type:
+              - 'null'
+              - string
+            MedrioId:
+              type:
+              - 'null'
+              - number
+            UserName:
+              type:
+              - 'null'
+              - string
+            FirstName:
+              type:
+              - 'null'
+              - string
+            StepOrder:
+              type:
+              - 'null'
+              - number
+            StudyName:
+              type:
+              - 'null'
+              - string
+            SubjectId:
+              type:
+              - 'null'
+              - string
+            TimeStamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            CustomerID:
+              type:
+              - 'null'
+              - number
+            UserMessage:
+              type:
+              - 'null'
+              - string
+            GlobalStudyId:
+              type:
+              - 'null'
+              - string
+              format: uuid
+            ApprovalStatus:
+              type:
+              - 'null'
+              - string
+            ApprovalStepName:
+              type:
+              - 'null'
+              - string
+            ApprovalStepCompletion:
+              type:
+              - 'null'
+              - string
+            GlobalApprovalEvent_Id:
+              type:
+              - 'null'
+              - string
+              format: uuid
+            Required_Variables_Approved:
+              type:
+              - 'null'
+              - string
+        supported_sync_modes:
+        - full_refresh
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - GlobalApprovalEvent_Id
+      config:
+        sync_mode: full_refresh
+        destination_sync_mode: overwrite
+        cursor_field: []
+        primary_key:
+        - - GlobalApprovalEvent_Id
+        alias_name: approval_event
+        selected: true
+    - stream:
+        name: form_status
+        json_schema:
+          type:
+          - 'null'
+          - object
+          $schema: http://json-schema.org/draft-07/schema#
+          properties:
+            SiteName:
+              type:
+              - 'null'
+              - string
+            DDEStatus:
+              type:
+              - 'null'
+              - integer
+            FormLabel:
+              type:
+              - 'null'
+              - string
+            GroupName:
+              type:
+              - 'null'
+              - string
+            SubjectId:
+              type:
+              - 'null'
+              - string
+            CustomerID:
+              type:
+              - 'null'
+              - number
+            VisitLabel:
+              type:
+              - 'null'
+              - string
+            OpenQueries:
+              type:
+              - 'null'
+              - number
+            FormIsLocked:
+              type:
+              - 'null'
+              - string
+            TotalQueries:
+              type:
+              - 'null'
+              - number
+            ClosedQueries:
+              type:
+              - 'null'
+              - number
+            FormDdeStatus:
+              type:
+              - 'null'
+              - string
+            GlobalStudyId:
+              type:
+              - 'null'
+              - string
+              format: uuid
+            SubjectStatus:
+              type:
+              - 'null'
+              - string
+            SubjectIsLocked:
+              type:
+              - 'null'
+              - string
+            SubjectMedrioId:
+              type:
+              - 'null'
+              - number
+            RespondedQueries:
+              type:
+              - 'null'
+              - number
+            FormLockTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            FormHasDataEntered:
+              type:
+              - 'null'
+              - string
+            FormDoubleEntryDate:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            FormIsDoubleEntered:
+              type:
+              - 'null'
+              - number
+            FormUnlockTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            FormCompletionStatus:
+              type:
+              - 'null'
+              - string
+            GlobalCollectionPtID:
+              type:
+              - 'null'
+              - string
+              format: uuid
+            SubjectLockTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            SubjectVisitIsLocked:
+              type:
+              - 'null'
+              - string
+            FormFirstSaveUsername:
+              type:
+              - 'null'
+              - string
+            FormFirstSaveEntryDate:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            FormLastUpdateUsername:
+              type:
+              - 'null'
+              - string
+            SubjectUnlockTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            FormDoubleEntryUsername:
+              type:
+              - 'null'
+              - string
+            FormLastUpdateEntryDate:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            SubjectVisitLockTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            SubjectVisitUnlockTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+        supported_sync_modes:
+        - full_refresh
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - GlobalCollectionPtID
+      config:
+        sync_mode: full_refresh
+        destination_sync_mode: append
+        cursor_field: []
+        primary_key:
+        - - GlobalCollectionPtID
+        alias_name: form_status
+        selected: false
+  status: active
+  namespace_definition: customformat
+  namespace_format: MEDRIO
+  prefix: ''
+  schedule:
+    units: 24
+    time_unit: hours
+  operations:
+  - name: Normalization
+    operator_configuration:
+      operator_type: normalization
+      normalization:
+        option: basic

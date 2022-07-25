@@ -1,0 +1,10 @@
+resource_name: Medrio
+definition_type: source
+definition_id: 0fea1758-12f5-4b74-b0dc-1a2c1171552c
+definition_image: 878324840923.dkr.ecr.us-east-1.amazonaws.com/airbyte/source-medrio
+definition_version: dev
+configuration:
+  api_user_name: medriodataviews
+  api_user_password: ${MEDRIO_API_USER_PASSWORD}
+  enterprise_api_key: ${MEDRIO_ENTERPRISE_API_KEY}
+  medrio_study_name_array: []

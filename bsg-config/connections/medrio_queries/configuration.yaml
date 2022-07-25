@@ -1,0 +1,152 @@
+definition_type: connection
+resource_name: Medrio Queries
+source_configuration_path: sources/medrio/configuration.yaml
+destination_configuration_path: destinations/snowflake/configuration.yaml
+configuration:
+  sync_catalog:
+    streams:
+    - stream:
+        name: queries
+        json_schema:
+          type:
+          - 'null'
+          - object
+          $schema: http://json-schema.org/draft-07/schema#
+          properties:
+            Form:
+              type:
+              - 'null'
+              - string
+            Site:
+              type:
+              - 'null'
+              - string
+            Group:
+              type:
+              - 'null'
+              - string
+            Study:
+              type:
+              - 'null'
+              - string
+            Visit:
+              type:
+              - 'null'
+              - string
+            QueryId:
+              type:
+              - 'null'
+              - string
+            ClosedBy:
+              type:
+              - 'null'
+              - string
+            MedrioID:
+              type:
+              - 'null'
+              - string
+            OpenedBy:
+              type:
+              - 'null'
+              - string
+            QueryType:
+              type:
+              - 'null'
+              - string
+            RowNumber:
+              type:
+              - 'null'
+              - string
+            SubjectID:
+              type:
+              - 'null'
+              - string
+            CustomerID:
+              type:
+              - 'null'
+              - string
+            QueryStatus:
+              type:
+              - 'null'
+              - string
+            VariableName:
+              type:
+              - 'null'
+              - string
+            VariableText:
+              type:
+              - 'null'
+              - string
+            GlobalQueryId:
+              type:
+              - 'null'
+              - string
+            GlobalStudyId:
+              type:
+              - 'null'
+              - string
+            OpenTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            ResponseCount:
+              type:
+              - 'null'
+              - string
+            CloseTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            FormRepeatLabel:
+              type:
+              - 'null'
+              - string
+            QueryDescription:
+              type:
+              - 'null'
+              - string
+            QueryDesignation:
+              type:
+              - 'null'
+              - string
+            ReasonForClosing:
+              type:
+              - 'null'
+              - string
+            VisitRepeatLabel:
+              type:
+              - 'null'
+              - string
+            LastUpdatedTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+        supported_sync_modes:
+        - full_refresh
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - GlobalQueryId
+      config:
+        sync_mode: full_refresh
+        destination_sync_mode: append
+        cursor_field: []
+        primary_key:
+        - - GlobalQueryId
+        alias_name: queries
+        selected: true
+  status: active
+  namespace_definition: customformat
+  namespace_format: MEDRIO
+  prefix: ''
+  schedule:
+    units: 24
+    time_unit: hours
+  operations:
+  - name: Normalization
+    operator_configuration:
+      operator_type: normalization
+      normalization:
+        option: basic

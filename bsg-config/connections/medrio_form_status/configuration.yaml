@@ -1,0 +1,188 @@
+definition_type: connection
+resource_name: Medrio Form Status
+source_configuration_path: sources/medrio/configuration.yaml
+destination_configuration_path: destinations/snowflake/configuration.yaml
+configuration:
+  sync_catalog:
+    streams:
+    - stream:
+        name: form_status
+        json_schema:
+          type:
+          - 'null'
+          - object
+          $schema: http://json-schema.org/draft-07/schema#
+          properties:
+            SiteName:
+              type:
+              - 'null'
+              - string
+            DDEStatus:
+              type:
+              - 'null'
+              - integer
+            FormLabel:
+              type:
+              - 'null'
+              - string
+            GroupName:
+              type:
+              - 'null'
+              - string
+            SubjectId:
+              type:
+              - 'null'
+              - string
+            CustomerID:
+              type:
+              - 'null'
+              - number
+            VisitLabel:
+              type:
+              - 'null'
+              - string
+            OpenQueries:
+              type:
+              - 'null'
+              - number
+            FormIsLocked:
+              type:
+              - 'null'
+              - string
+            TotalQueries:
+              type:
+              - 'null'
+              - number
+            ClosedQueries:
+              type:
+              - 'null'
+              - number
+            FormDdeStatus:
+              type:
+              - 'null'
+              - string
+            GlobalStudyId:
+              type:
+              - 'null'
+              - string
+              format: uuid
+            SubjectStatus:
+              type:
+              - 'null'
+              - string
+            SubjectIsLocked:
+              type:
+              - 'null'
+              - string
+            SubjectMedrioId:
+              type:
+              - 'null'
+              - number
+            RespondedQueries:
+              type:
+              - 'null'
+              - number
+            FormLockTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            FormHasDataEntered:
+              type:
+              - 'null'
+              - string
+            FormDoubleEntryDate:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            FormIsDoubleEntered:
+              type:
+              - 'null'
+              - number
+            FormUnlockTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            FormCompletionStatus:
+              type:
+              - 'null'
+              - string
+            GlobalCollectionPtID:
+              type:
+              - 'null'
+              - string
+              format: uuid
+            SubjectLockTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            SubjectVisitIsLocked:
+              type:
+              - 'null'
+              - string
+            FormFirstSaveUsername:
+              type:
+              - 'null'
+              - string
+            FormFirstSaveEntryDate:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            FormLastUpdateUsername:
+              type:
+              - 'null'
+              - string
+            SubjectUnlockTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            FormDoubleEntryUsername:
+              type:
+              - 'null'
+              - string
+            FormLastUpdateEntryDate:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            SubjectVisitLockTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+            SubjectVisitUnlockTimestamp:
+              type:
+              - 'null'
+              - string
+              format: date-time
+        supported_sync_modes:
+        - full_refresh
+        default_cursor_field: []
+        source_defined_primary_key:
+        - - GlobalCollectionPtID
+      config:
+        sync_mode: full_refresh
+        destination_sync_mode: append
+        cursor_field: []
+        primary_key:
+        - - GlobalCollectionPtID
+        alias_name: form_status
+        selected: true
+  status: active
+  namespace_definition: customformat
+  namespace_format: MEDRIO
+  prefix: ''
+  schedule:
+    units: 24
+    time_unit: hours
+  operations:
+  - name: Normalization
+    operator_configuration:
+      operator_type: normalization
+      normalization:
+        option: basic

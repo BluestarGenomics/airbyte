@@ -1,0 +1,16 @@
+resource_name: Snowflake
+definition_type: destination
+definition_id: 424892c4-daac-4491-b35d-c6688ba547ba
+definition_image: airbyte/destination-snowflake
+definition_version: 0.4.33
+configuration:
+  host: bluestargenomics.us-east-1.snowflakecomputing.com
+  role: LOADER
+  schema: AIRBYTE_SCHEMA
+  database: RAW
+  username: AIRBYTE_USER
+  warehouse: LOADING
+  credentials:
+    password: ${SNOWFLAKE_PASSWORD}
+  loading_method:
+    method: Internal Staging
