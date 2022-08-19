@@ -1,0 +1,163 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": [
+        "null",
+        "object"
+    ],
+    "properties": {
+        "GlobalDatumId": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "uuid"
+        },
+        "GlobalStudyId": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "uuid"
+        },
+        "CustomerID": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "Site": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "Group": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "MedrioId": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "SubjectId": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "VisitName": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "FormName": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "VariableName": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "LabelName": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "SasName": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "RowNumber": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "OldValue": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "NewValue": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "Reason": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "Comment": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "UserName": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "UserFirstName": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "UserLastName": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "SubjectEntry": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "DataEntryLocalDateVal": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "DataEntryTimeZone": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "DataEntryUtcDateVal": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "Source": {
+            "type": [
+                "null",
+                "string"
+            ]
+        }
+    }
+}

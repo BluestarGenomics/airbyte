@@ -10,6 +10,7 @@ MAIN_REQUIREMENTS = [
     "lxml",
     "untangle",
     "retry",
+    "pendulum",
 ]
 
 TEST_REQUIREMENTS = [

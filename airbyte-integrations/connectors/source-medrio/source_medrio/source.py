@@ -6,6 +6,7 @@
 from abc import ABC
 from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple
 
+import pendulum
 import requests
 from airbyte_cdk.logger import AirbyteLogger
 from airbyte_cdk.sources import AbstractSource
@@ -13,7 +14,7 @@ from airbyte_cdk.sources.streams import Stream
 from airbyte_cdk.sources.streams.http import HttpStream
 from airbyte_cdk.sources.streams.http.auth import TokenAuthenticator
 from .medrio_odm import MedrioOdmApi
-from .streams import ApprovalEvent, FormStatus, Studies, Queries
+from .streams import ApprovalEvent, DataAudit, FormStatus, Studies, Queries
 
 
 logger = AirbyteLogger()
@@ -82,6 +83,7 @@ class SourceMedrio(AbstractSource):
         auth_v1 = self.get_token(config, "v1")
         auth_v2 = self.get_token(config, "v2")
         odm_api = MedrioOdmApi(api_key=config["enterprise_api_key"])
+        start_date = config["start_date"]
         studies = odm_api.get_studies()
         streams = []
         # for study_name in config["medrio_study_name_array"]:
@@ -93,4 +95,5 @@ class SourceMedrio(AbstractSource):
             Queries(authenticator=auth_v2),
             ApprovalEvent(authenticator=auth_v2),
             FormStatus(authenticator=auth_v2),
+            DataAudit(authenticator=auth_v2, start_date=start_date),
         ]
