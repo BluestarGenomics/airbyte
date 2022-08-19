@@ -47,7 +47,6 @@ class MedrioV1Stream(MedrioHttpStream):
         return None
 
     def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
-        logger.info(f"Parsing response for stream {self.name}")
         response_json = response.json()
         yield from response_json.get("response", [])
 
@@ -83,7 +82,6 @@ class MedrioV2Stream(MedrioHttpStream):
             return parse_qs(urlsplit(decoded_response.get("@odata.nextLink")).query)
 
     def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
-        logger.info(f"Parsing response for stream {self.name}")
         response_json = response.json()
         yield from response_json.get("value", [])
 
@@ -93,7 +91,6 @@ class MedrioV2Stream(MedrioHttpStream):
         return request
 
     def read_records(self, **kwargs):
-        logger.info(f"Reading records for stream {self.name}")
         yield from super().read_records(**kwargs)
 
 
