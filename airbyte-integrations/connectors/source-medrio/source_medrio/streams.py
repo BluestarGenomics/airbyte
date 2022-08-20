@@ -101,13 +101,6 @@ class FormStatus(MedrioV2Stream):
         return "FormStatusReports"
 
 
-class ApprovalEvent(MedrioV2Stream):
-    primary_key = "GlobalApprovalEvent_Id"
-
-    def path(self, **kwargs) -> str:
-        return "ApprovalEventReports"
-
-
 class Queries(MedrioV2Stream):
     primary_key = "GlobalQueryId"
     # cursor_field = "LastUpdatedTimestamp"
@@ -183,3 +176,11 @@ class DataAudit(MedrioV2StreamIncremental):
 
     def path(self, **kwargs) -> str:
         return "DataAuditReports"
+
+
+class ApprovalEvent(MedrioV2StreamIncremental):
+    primary_key = "GlobalApprovalEvent_Id"
+    cursor_field = "TimeStamp"
+
+    def path(self, **kwargs) -> str:
+        return "ApprovalEventReports"
