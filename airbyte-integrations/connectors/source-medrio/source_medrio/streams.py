@@ -94,13 +94,6 @@ class MedrioV2Stream(MedrioHttpStream):
         yield from super().read_records(**kwargs)
 
 
-class FormStatus(MedrioV2Stream):
-    primary_key = "GlobalCollectionPtID"
-
-    def path(self, **kwargs) -> str:
-        return "FormStatusReports"
-
-
 class Queries(MedrioV2Stream):
     primary_key = "GlobalQueryId"
     # cursor_field = "LastUpdatedTimestamp"
@@ -184,3 +177,11 @@ class ApprovalEvent(MedrioV2StreamIncremental):
 
     def path(self, **kwargs) -> str:
         return "ApprovalEventReports"
+
+
+class FormStatus(MedrioV2StreamIncremental):
+    primary_key = "GlobalCollectionPtID"
+    cursor_field = "FormLastUpdateEntryDate"
+
+    def path(self, **kwargs) -> str:
+        return "FormStatusReports"

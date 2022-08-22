@@ -80,6 +80,6 @@ class SourceMedrio(AbstractSource):
             Studies(authenticator=auth_v1),
             Queries(authenticator=auth_v2),
             ApprovalEvent(authenticator=auth_v2, start_date=start_date),
-            FormStatus(authenticator=auth_v2),
+            FormStatus(authenticator=auth_v2, start_date=start_date),
             DataAudit(authenticator=auth_v2, start_date=start_date),
         ]
