@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 
 import { LoadingPage } from "components";
 
+import { MissingConfigError, useConfig } from "config";
 import { ApiServices } from "core/ApiServices";
 import { RequestMiddleware } from "core/request/RequestMiddleware";
 import { ServicesProvider, useGetService, useInjectServices } from "core/servicesProvider";
@@ -9,7 +10,6 @@ import { RequestAuthMiddleware } from "packages/cloud/lib/auth/RequestAuthMiddle
 import { UserService } from "packages/cloud/lib/domain/users";
 import { useAuth } from "packages/firebaseReact";
 
-import { useConfig } from "./config";
 import { FirebaseSdkProvider } from "./FirebaseSdkProvider";
 
 /**
@@ -17,7 +17,7 @@ import { FirebaseSdkProvider } from "./FirebaseSdkProvider";
  * It initializes all required services for app to work
  * and also adds all overrides of hooks/services
  */
-const AppServicesProvider: React.FC = ({ children }) => {
+const AppServicesProvider: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   return (
     <ServicesProvider>
       <FirebaseSdkProvider>
@@ -27,7 +27,7 @@ const AppServicesProvider: React.FC = ({ children }) => {
   );
 };
 
-const ServiceOverrides: React.FC = React.memo(({ children }) => {
+const ServiceOverrides: React.FC<React.PropsWithChildren<unknown>> = React.memo(({ children }) => {
   const auth = useAuth();
 
   const middlewares: RequestMiddleware[] = useMemo(
@@ -42,6 +42,10 @@ const ServiceOverrides: React.FC = React.memo(({ children }) => {
   );
 
   const { cloudApiUrl } = useConfig();
+
+  if (!cloudApiUrl) {
+    throw new MissingConfigError("Missing required configuration cloudApiUrl");
+  }
 
   const inject = useMemo(
     () => ({

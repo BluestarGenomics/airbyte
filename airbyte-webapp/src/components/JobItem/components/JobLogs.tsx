@@ -1,39 +1,61 @@
-import { clamp } from "lodash";
+import clamp from "lodash/clamp";
 import React, { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { useLocation } from "react-router-dom";
 
-import { SynchronousJobReadWithStatus } from "core/request/LogsRequestError";
-import { JobsWithJobs } from "pages/ConnectionPage/pages/ConnectionItemPage/components/JobsList";
+import { StatusIcon } from "components/ui/StatusIcon";
+import { StatusIconStatus } from "components/ui/StatusIcon/StatusIcon";
+import { Text } from "components/ui/Text";
+
+import { AttemptRead, AttemptStatus, SynchronousJobRead } from "core/request/AirbyteClient";
 import { useGetDebugInfoJob } from "services/job/JobService";
 
-import { AttemptRead, AttemptStatus } from "../../../core/request/AirbyteClient";
-import { parseAttemptLink } from "../attemptLinkUtils";
+import styles from "./JobLogs.module.scss";
 import Logs from "./Logs";
 import { LogsDetails } from "./LogsDetails";
 import Tabs, { TabsData } from "./Tabs";
+import { parseAttemptLink } from "../attemptLinkUtils";
+import { JobsWithJobs } from "../types";
+import { isCancelledAttempt } from "../utils";
 
-type JobLogsProps = {
+interface JobLogsProps {
   jobIsFailed?: boolean;
-  job: SynchronousJobReadWithStatus | JobsWithJobs;
+  job: SynchronousJobRead | JobsWithJobs;
+}
+
+const mapAttemptStatusToIcon = (attempt: AttemptRead): StatusIconStatus => {
+  if (isPartialSuccess(attempt)) {
+    return "warning";
+  }
+
+  if (isCancelledAttempt(attempt)) {
+    return "cancelled";
+  }
+
+  switch (attempt.status) {
+    case AttemptStatus.running:
+      return "loading";
+    case AttemptStatus.succeeded:
+      return "success";
+    case AttemptStatus.failed:
+      return "error";
+  }
 };
 
 const isPartialSuccess = (attempt: AttemptRead) => {
   return !!attempt.failureSummary?.partialSuccess;
 };
 
-const jobIsSynchronousJobRead = (
-  job: SynchronousJobReadWithStatus | JobsWithJobs
-): job is SynchronousJobReadWithStatus => {
-  return !!(job as SynchronousJobReadWithStatus)?.logs?.logLines;
+const jobIsSynchronousJobRead = (job: SynchronousJobRead | JobsWithJobs): job is SynchronousJobRead => {
+  return !!(job as SynchronousJobRead)?.logs?.logLines;
 };
 
-const JobLogs: React.FC<JobLogsProps> = ({ jobIsFailed, job }) => {
+export const JobLogs: React.FC<JobLogsProps> = ({ jobIsFailed, job }) => {
   const isSynchronousJobRead = jobIsSynchronousJobRead(job);
 
-  const id: number | string = (job as JobsWithJobs).job?.id ?? (job as SynchronousJobReadWithStatus).id;
+  const id: number | string = (job as JobsWithJobs).job?.id ?? (job as SynchronousJobRead).id;
 
-  const debugInfo = useGetDebugInfoJob(id, typeof id === "number");
+  const debugInfo = useGetDebugInfoJob(id, typeof id === "number", true);
 
   const { hash } = useLocation();
   const [attemptNumber, setAttemptNumber] = useState<number>(() => {
@@ -61,8 +83,7 @@ const JobLogs: React.FC<JobLogsProps> = ({ jobIsFailed, job }) => {
   const attemptsTabs: TabsData[] =
     job.attempts?.map((item, index) => ({
       id: index.toString(),
-      isPartialSuccess: isPartialSuccess(item),
-      status: item.status === AttemptStatus.failed || item.status === AttemptStatus.succeeded ? item.status : undefined,
+      icon: <StatusIcon status={mapAttemptStatusToIcon(item)} />,
       name: <FormattedMessage id="sources.attemptNum" values={{ number: index + 1 }} />,
     })) ?? [];
 
@@ -70,24 +91,28 @@ const JobLogs: React.FC<JobLogsProps> = ({ jobIsFailed, job }) => {
 
   return (
     <>
-      {attempts > 1 ? (
+      {attempts > 1 && (
         <Tabs
           activeStep={attemptNumber.toString()}
           onSelect={(at) => setAttemptNumber(parseInt(at))}
           data={attemptsTabs}
           isFailed={jobIsFailed}
         />
-      ) : null}
-      <LogsDetails
-        id={job.job.id}
-        path={path}
-        currentAttempt={currentAttempt}
-        jobDebugInfo={debugInfo}
-        showAttemptStats={attempts > 1}
-        logs={debugInfo?.attempts[attemptNumber]?.logs.logLines}
-      />
+      )}
+      {attempts ? (
+        <LogsDetails
+          id={job.job.id}
+          path={path}
+          currentAttempt={currentAttempt}
+          jobDebugInfo={debugInfo}
+          showAttemptStats={attempts > 1}
+          logs={debugInfo?.attempts[attemptNumber]?.logs.logLines}
+        />
+      ) : (
+        <Text size="md" className={styles.jobStartFailure}>
+          <FormattedMessage id="jobs.noAttemptsFailure" />
+        </Text>
+      )}
     </>
   );
 };
-
-export default JobLogs;

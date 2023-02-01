@@ -3,7 +3,10 @@ import { FormattedMessage } from "react-intl";
 
 import { CommonRequestError } from "core/request/CommonRequestError";
 
-type BoundaryState = { hasError: boolean; message?: React.ReactNode | null };
+interface BoundaryState {
+  hasError: boolean;
+  message?: React.ReactNode | null;
+}
 
 const initialState: BoundaryState = {
   hasError: false,
@@ -11,7 +14,7 @@ const initialState: BoundaryState = {
 };
 
 export class ResourceNotFoundErrorBoundary extends React.Component<
-  { errorComponent: React.ReactElement },
+  React.PropsWithChildren<{ errorComponent: React.ReactElement }>,
   BoundaryState
 > {
   static getDerivedStateFromError(error: CommonRequestError): BoundaryState {
@@ -21,9 +24,8 @@ export class ResourceNotFoundErrorBoundary extends React.Component<
         hasError: true,
         message: <FormattedMessage id={messageId} />,
       };
-    } else {
-      throw error;
     }
+    throw error;
   }
 
   state = initialState;

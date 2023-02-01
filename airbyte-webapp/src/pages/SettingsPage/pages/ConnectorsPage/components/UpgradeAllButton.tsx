@@ -4,12 +4,9 @@ import React from "react";
 import { FormattedMessage } from "react-intl";
 import styled from "styled-components";
 
-import { LoadingButton } from "components";
+import { Button } from "components/ui/Button";
 
-const UpdateButton = styled(LoadingButton)`
-  margin: -6px 0;
-  min-width: 120px;
-`;
+import styles from "./UpgradeAllButton.module.scss";
 
 const TryArrow = styled(FontAwesomeIcon)`
   margin: 0 10px -1px 0;
@@ -33,14 +30,15 @@ const ErrorBlock = styled.div`
   left: -46px;
 `;
 
-type UpdateAllButtonProps = {
+interface UpdateAllButtonProps {
   onUpdate: () => void;
   isLoading: boolean;
   hasError: boolean;
   hasSuccess: boolean;
-};
+  disabled: boolean;
+}
 
-const UpgradeAllButton: React.FC<UpdateAllButtonProps> = ({ onUpdate, isLoading, hasError, hasSuccess }) => {
+const UpgradeAllButton: React.FC<UpdateAllButtonProps> = ({ onUpdate, isLoading, hasError, hasSuccess, disabled }) => {
   return (
     <UpdateButtonContent>
       {hasError && (
@@ -48,16 +46,16 @@ const UpgradeAllButton: React.FC<UpdateAllButtonProps> = ({ onUpdate, isLoading,
           <FormattedMessage id="form.someError" />
         </ErrorBlock>
       )}
-      <UpdateButton onClick={onUpdate} isLoading={isLoading} wasActive={hasSuccess}>
-        {hasSuccess ? (
-          <FormattedMessage id="admin.upgraded" />
-        ) : (
-          <>
-            <TryArrow icon={faRedoAlt} />
-            <FormattedMessage id="admin.upgradeAll" />
-          </>
-        )}
-      </UpdateButton>
+      <Button
+        size="xs"
+        className={styles.updateButton}
+        onClick={onUpdate}
+        isLoading={isLoading}
+        disabled={disabled}
+        icon={hasSuccess ? undefined : <TryArrow icon={faRedoAlt} />}
+      >
+        {hasSuccess ? <FormattedMessage id="admin.upgraded" /> : <FormattedMessage id="admin.upgradeAll" />}
+      </Button>
     </UpdateButtonContent>
   );
 };

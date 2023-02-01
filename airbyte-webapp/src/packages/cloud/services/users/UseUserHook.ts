@@ -3,8 +3,8 @@ import { useMutation, useQueryClient } from "react-query";
 import { useCurrentWorkspace } from "hooks/services/useWorkspace";
 import { SCOPE_WORKSPACE } from "services/Scope";
 
-import { useSuspenseQuery } from "../../../../services/connector/useSuspenseQuery";
 import { useGetUserService } from "./UserService";
+import { useSuspenseQuery } from "../../../../services/connector/useSuspenseQuery";
 
 export const userKeys = {
   all: [SCOPE_WORKSPACE, "users"] as const,
@@ -36,9 +36,9 @@ export const useUserHook = () => {
     ),
     inviteUserLogic: useMutation(
       async (payload: {
-        users: {
+        users: Array<{
           email: string;
-        }[];
+        }>;
         workspaceId: string;
       }) => service.invite(payload.users, payload.workspaceId),
       {

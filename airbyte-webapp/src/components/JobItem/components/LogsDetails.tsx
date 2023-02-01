@@ -1,12 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 
-import { AttemptRead, JobDebugInfoRead } from "../../../core/request/AirbyteClient";
-import AttemptDetails from "./AttemptDetails";
-import DebugInfoButton from "./DebugInfoButton";
+import { AttemptDetails } from "./AttemptDetails";
 import DownloadButton from "./DownloadButton";
 import { LinkToAttemptButton } from "./LinkToAttemptButton";
 import LogsTable from "./Logs";
+import { AttemptRead, JobDebugInfoRead } from "../../../core/request/AirbyteClient";
 
 const LogHeader = styled.div`
   display: flex;
@@ -18,8 +17,7 @@ const LogHeader = styled.div`
 `;
 
 const AttemptDetailsSection = styled.div`
-  padding-left: 10px;
-  padding-top: 10px;
+  padding: 10px 0 10px 10px;
 `;
 
 const LogPath = styled.span`
@@ -44,12 +42,7 @@ export const LogsDetails: React.FC<{
     <LogHeader>
       <LogPath>{path}</LogPath>
       <LinkToAttemptButton jobId={id} attemptId={currentAttempt?.id} />
-      {jobDebugInfo && (
-        <>
-          <DownloadButton jobDebugInfo={jobDebugInfo} fileName={`logs-${id}`} />
-          <DebugInfoButton jobDebugInfo={jobDebugInfo} />
-        </>
-      )}
+      {jobDebugInfo && <DownloadButton jobDebugInfo={jobDebugInfo} fileName={`logs-${id}`} />}
     </LogHeader>
     <LogsTable logsArray={logs} />
   </>

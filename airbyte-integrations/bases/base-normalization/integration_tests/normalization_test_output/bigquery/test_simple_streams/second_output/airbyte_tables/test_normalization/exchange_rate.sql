@@ -20,6 +20,11 @@ select
     json_extract_scalar(_airbyte_data, "$['NZD']") as NZD,
     json_extract_scalar(_airbyte_data, "$['USD']") as USD,
     json_extract_scalar(_airbyte_data, "$['column___with__quotes']") as column___with__quotes,
+    json_extract_scalar(_airbyte_data, "$['datetime_tz']") as datetime_tz,
+    json_extract_scalar(_airbyte_data, "$['datetime_no_tz']") as datetime_no_tz,
+    json_extract_scalar(_airbyte_data, "$['time_tz']") as time_tz,
+    json_extract_scalar(_airbyte_data, "$['time_no_tz']") as time_no_tz,
+    json_extract_scalar(_airbyte_data, "$['property_binary_data']") as property_binary_data,
     _airbyte_ab_id,
     _airbyte_emitted_at,
     CURRENT_TIMESTAMP() as _airbyte_normalized_at
@@ -58,6 +63,19 @@ select
     cast(column___with__quotes as 
     string
 ) as column___with__quotes,
+    cast(nullif(datetime_tz, '') as 
+    timestamp
+) as datetime_tz,
+    cast(nullif(datetime_no_tz, '') as 
+    datetime
+) as datetime_no_tz,
+    cast(nullif(time_tz, '') as 
+    STRING
+) as time_tz,
+    cast(nullif(time_no_tz, '') as 
+    time
+) as time_no_tz,
+    cast(FROM_BASE64(property_binary_data) as bytes) as property_binary_data,
     _airbyte_ab_id,
     _airbyte_emitted_at,
     CURRENT_TIMESTAMP() as _airbyte_normalized_at
@@ -87,6 +105,16 @@ select
     string
 ), ''), '-', coalesce(cast(column___with__quotes as 
     string
+), ''), '-', coalesce(cast(datetime_tz as 
+    string
+), ''), '-', coalesce(cast(datetime_no_tz as 
+    string
+), ''), '-', coalesce(cast(time_tz as 
+    string
+), ''), '-', coalesce(cast(time_no_tz as 
+    string
+), ''), '-', coalesce(cast(property_binary_data as 
+    string
 ), '')) as 
     string
 ))) as _airbyte_exchange_rate_hashid,
@@ -106,6 +134,11 @@ select
     NZD,
     USD,
     column___with__quotes,
+    datetime_tz,
+    datetime_no_tz,
+    time_tz,
+    time_no_tz,
+    property_binary_data,
     _airbyte_ab_id,
     _airbyte_emitted_at,
     CURRENT_TIMESTAMP() as _airbyte_normalized_at,

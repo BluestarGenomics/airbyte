@@ -1,49 +1,41 @@
+import { createColumnHelper } from "@tanstack/react-table";
+import classNames from "classnames";
 import queryString from "query-string";
 import React, { useCallback } from "react";
-import { FormattedMessage } from "react-intl";
-import { CellProps } from "react-table";
-import styled from "styled-components";
+import { FormattedMessage, FormattedNumber } from "react-intl";
+import { useNavigate } from "react-router-dom";
 
-import SortButton from "components/EntityTable/components/SortButton";
 import { SortOrderEnum } from "components/EntityTable/types";
-import Table from "components/Table";
+import { NextTable } from "components/ui/NextTable";
+import { SortableTableHeader } from "components/ui/Table";
+import { Text } from "components/ui/Text";
 
-import useRouter from "hooks/useRouter";
+import { useQuery } from "hooks/useQuery";
 import { CreditConsumptionByConnector } from "packages/cloud/lib/domain/cloudWorkspaces/types";
 import { useDestinationDefinitionList } from "services/connector/DestinationDefinitionService";
 import { useSourceDefinitionList } from "services/connector/SourceDefinitionService";
 
 import ConnectionCell from "./ConnectionCell";
 import UsageCell from "./UsageCell";
+import styles from "./UsagePerConnectionTable.module.scss";
 
-const Content = styled.div`
-  padding: 0 60px 0 15px;
-`;
-
-const UsageValue = styled.div`
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 17px;
-  padding-right: 10px;
-  min-width: 53px;
-`;
-
-type UsagePerConnectionTableProps = {
+interface UsagePerConnectionTableProps {
   creditConsumption: CreditConsumptionByConnector[];
-};
+}
 
 type FullTableProps = CreditConsumptionByConnector & {
   creditsConsumedPercent: number;
-  sourceIcon: string;
-  destinationIcon: string;
+  sourceIcon?: string;
+  destinationIcon?: string;
 };
 
 const UsagePerConnectionTable: React.FC<UsagePerConnectionTableProps> = ({ creditConsumption }) => {
-  const { query, push } = useRouter();
+  const query = useQuery<{ sortBy?: string; order?: SortOrderEnum }>();
+  const navigate = useNavigate();
   const { sourceDefinitions } = useSourceDefinitionList();
   const { destinationDefinitions } = useDestinationDefinitionList();
 
-  const creditConsumptionWithPercent = React.useMemo(() => {
+  const creditConsumptionWithPercent = React.useMemo<FullTableProps[]>(() => {
     const sumCreditsConsumed = creditConsumption.reduce((a, b) => a + b.creditsConsumed, 0);
     return creditConsumption.map((item) => {
       const currentSourceDefinition = sourceDefinitions.find(
@@ -52,13 +44,14 @@ const UsagePerConnectionTable: React.FC<UsagePerConnectionTableProps> = ({ credi
       const currentDestinationDefinition = destinationDefinitions.find(
         (def) => def.destinationDefinitionId === item.destinationDefinitionId
       );
-
-      return {
+      const newItem: FullTableProps = {
         ...item,
         sourceIcon: currentSourceDefinition?.icon,
         destinationIcon: currentDestinationDefinition?.icon,
         creditsConsumedPercent: sumCreditsConsumed ? (item.creditsConsumed / sumCreditsConsumed) * 100 : 0,
       };
+
+      return newItem;
     });
   }, [creditConsumption, sourceDefinitions, destinationDefinitions]);
 
@@ -69,17 +62,17 @@ const UsagePerConnectionTable: React.FC<UsagePerConnectionTableProps> = ({ credi
     (field: string) => {
       const order =
         sortBy !== field ? SortOrderEnum.ASC : sortOrder === SortOrderEnum.ASC ? SortOrderEnum.DESC : SortOrderEnum.ASC;
-      push({
+      navigate({
         search: queryString.stringify(
           {
             sortBy: field,
-            order: order,
+            order,
           },
           { skipNull: true }
         ),
       });
     },
-    [push, sortBy, sortOrder]
+    [navigate, sortBy, sortOrder]
   );
 
   const sortData = useCallback(
@@ -101,71 +94,82 @@ const UsagePerConnectionTable: React.FC<UsagePerConnectionTableProps> = ({ credi
   );
 
   const sortingData = React.useMemo(
-    () => creditConsumptionWithPercent.sort(sortData),
+    // This is temporary solution, since there is an issue with array that
+    // creditConsumptionWithPercent.sort(sortData) returns; when passed into useReactTable
+    // the reference to this array stays the same, so useReactTable is not updating the table,
+    // therefore sorting not working; after implementing native react table sorting mechanism
+    // this problem should be solved
+    () => [...creditConsumptionWithPercent.sort(sortData)],
     [sortData, creditConsumptionWithPercent]
   );
 
+  const columnHelper = createColumnHelper<FullTableProps>();
+
   const columns = React.useMemo(
     () => [
-      {
-        Header: (
-          <>
+      columnHelper.accessor("sourceDefinitionName", {
+        header: () => (
+          <SortableTableHeader
+            onClick={() => onSortClick("connection")}
+            isActive={sortBy === "connection"}
+            isAscending={sortOrder === SortOrderEnum.ASC}
+          >
             <FormattedMessage id="credits.connection" />
-            <SortButton
-              wasActive={sortBy === "connection"}
-              lowToLarge={sortOrder === SortOrderEnum.ASC}
-              onClick={() => onSortClick("connection")}
-            />
-          </>
+          </SortableTableHeader>
         ),
-        customWidth: 30,
-        accessor: "sourceDefinitionName",
-        Cell: ({ cell, row }: CellProps<FullTableProps>) => (
+        meta: {
+          thClassName: classNames(styles.thConnection, styles.light),
+        },
+        cell: (props) => (
           <ConnectionCell
-            sourceDefinitionName={cell.value}
-            destinationDefinitionName={row.original.destinationDefinitionName}
-            sourceIcon={row.original.sourceIcon}
-            destinationIcon={row.original.destinationIcon}
+            sourceDefinitionName={props.cell.getValue()}
+            destinationDefinitionName={props.row.original.destinationDefinitionName}
+            sourceIcon={props.row.original.sourceIcon}
+            destinationIcon={props.row.original.destinationIcon}
           />
         ),
-      },
-      {
-        Header: (
-          <>
+      }),
+      columnHelper.accessor("creditsConsumed", {
+        header: () => (
+          <SortableTableHeader
+            onClick={() => onSortClick("usage")}
+            isActive={sortBy === "usage"}
+            isAscending={sortOrder === SortOrderEnum.ASC}
+          >
             <FormattedMessage id="credits.usage" />
-            <SortButton
-              wasActive={sortBy === "usage"}
-              lowToLarge={sortOrder === SortOrderEnum.ASC}
-              onClick={() => onSortClick("usage")}
-            />
-          </>
+          </SortableTableHeader>
         ),
-        accessor: "creditsConsumed",
-        collapse: true,
-        customPadding: { right: 0 },
-        Cell: ({ cell }: CellProps<FullTableProps>) => <UsageValue>{cell.value}</UsageValue>,
-      },
-      {
-        Header: "",
-        accessor: "creditsConsumedPercent",
-        customPadding: { left: 0 },
-        Cell: ({ cell }: CellProps<FullTableProps>) => <UsageCell percent={cell.value} />,
-      },
-      // TODO: Replace to Grow column
-      {
-        Header: "",
-        accessor: "connectionId",
-        Cell: <div />,
-        customWidth: 20,
-      },
+        meta: {
+          thClassName: classNames(styles.thCreditsConsumed, styles.light),
+        },
+        cell: (props) => (
+          <Text className={styles.usageValue} size="lg">
+            <FormattedNumber value={props.cell.getValue()} maximumFractionDigits={2} minimumFractionDigits={2} />
+          </Text>
+        ),
+      }),
+      columnHelper.accessor("creditsConsumedPercent", {
+        header: "",
+        meta: {
+          thClassName: classNames(styles.thCreditsConsumedPercent, styles.light),
+        },
+        cell: (props) => <UsageCell percent={props.cell.getValue()} />,
+      }),
+      columnHelper.accessor("connectionId", {
+        header: "",
+        cell: () => <div />,
+        meta: {
+          thClassName: classNames(styles.thConnectionId, styles.light),
+        },
+      }),
     ],
-    [onSortClick, sortBy, sortOrder]
+    [columnHelper, onSortClick, sortBy, sortOrder]
   );
 
   return (
-    <Content>
-      <Table columns={columns} data={sortingData} light />
-    </Content>
+    <div className={styles.content}>
+      <NextTable columns={columns} data={sortingData} light />
+    </div>
   );
 };
 

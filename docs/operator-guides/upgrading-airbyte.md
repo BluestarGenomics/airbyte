@@ -21,7 +21,7 @@ To upgrade to v0.32.0-alpha-patch-1, follow the steps in the following sections,
 
 1. If you are in a cloned Airbyte repo, v0.32.0-alpha-patch-1 can be pulled from GitHub with
 
-   ``` 
+   ```
    git checkout v0.32.0-alpha-patch-1
    ```
 
@@ -31,10 +31,16 @@ If you use custom connectors, this upgrade requires all of your connector specs 
 
 ## Upgrading on Docker
 
+:::note
+
+Airbyte version 0.40.32 or later requires [Docker Compose V2](https://docs.docker.com/compose/compose-v2/) to be [installed](https://docs.docker.com/compose/install/) before upgrading.
+
+:::
+
 1. In a terminal, on the host where Airbyte is running, turn off Airbyte.
 
    ```bash
-   docker-compose down
+   docker compose down
    ```
 
 2. Upgrade the docker instance to new version.
@@ -46,7 +52,7 @@ If you use custom connectors, this upgrade requires all of your connector specs 
 3. Bring Airbyte back online.
 
    ```bash
-   docker-compose up
+   docker compose up
    ```
 
 ### Resetting your Configuration
@@ -66,7 +72,7 @@ If you are upgrading from (i.e. your current version of Airbyte is) Airbyte vers
 1. In a terminal, on the host where Airbyte is running, turn off Airbyte.
 
    ```bash
-   kubectl delete deployments airbyte-db airbyte-scheduler airbyte-server airbyte-temporal airbyte-webapp --namespace=<yournamespace or default>
+   kubectl delete deployments airbyte-db airbyte-worker airbyte-server airbyte-temporal airbyte-webapp --namespace=<yournamespace or default>
    ```
 
 2. Upgrade the kube deployment to new version.
@@ -103,7 +109,7 @@ If you are upgrading from (i.e. your current version of Airbyte is) Airbyte vers
    Here's an example of what it might look like with the values filled in. It assumes that the downloaded `airbyte_archive.tar.gz` is in `/tmp`.
 
    ```bash
-   docker run --rm -v /tmp:/config airbyte/migration:0.39.8-alpha --\
+   docker run --rm -v /tmp:/config airbyte/migration:0.40.32 --\
    --input /config/airbyte_archive.tar.gz\
    --output /config/airbyte_archive_migrated.tar.gz
    ```
@@ -147,4 +153,3 @@ Here is an example of what this request might look like assuming that the migrat
 ```bash
 curl -H "Content-Type: application/x-gzip" -X POST localhost:8000/api/v1/deployment/import --data-binary @/tmp/airbyte_archive_migrated.tar.gz
 ```
-

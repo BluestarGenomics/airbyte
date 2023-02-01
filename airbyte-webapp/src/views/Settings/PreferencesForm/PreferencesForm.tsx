@@ -4,16 +4,17 @@ import { FormattedMessage, useIntl } from "react-intl";
 import styled from "styled-components";
 import * as yup from "yup";
 
-import { BigButton } from "components/CenteredPageComponents";
 import Label from "components/Label";
 import LabeledInput from "components/LabeledInput";
 import { LabeledSwitch } from "components/LabeledSwitch";
+import { Button } from "components/ui/Button";
 
 import { useConfig } from "config";
+import { links } from "utils/links";
 
 import EditControls from "./components/EditControls";
 
-export type PreferencesFormProps = {
+export interface PreferencesFormProps {
   onSubmit: (data: {
     email: string;
     anonymousDataCollection: boolean;
@@ -29,7 +30,7 @@ export type PreferencesFormProps = {
   };
   successMessage?: React.ReactNode;
   errorMessage?: React.ReactNode;
-};
+}
 
 const ButtonContainer = styled.div`
   text-align: center;
@@ -69,22 +70,22 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
   successMessage,
   errorMessage,
 }) => {
-  const formatMessage = useIntl().formatMessage;
+  const { formatMessage } = useIntl();
   const config = useConfig();
 
   return (
     <Formik
       initialValues={{
         email: preferencesValues?.email || "",
-        anonymousDataCollection: preferencesValues?.anonymousDataCollection || false,
+        anonymousDataCollection: preferencesValues?.anonymousDataCollection || !config.segment.enabled,
         news: preferencesValues?.news || false,
         securityUpdates: preferencesValues?.securityUpdates || false,
       }}
-      validateOnBlur={true}
+      validateOnBlur
       validateOnChange={false}
       validationSchema={preferencesValidationSchema}
-      onSubmit={async (values) => {
-        await onSubmit(values);
+      onSubmit={(values) => {
+        onSubmit(values);
       }}
     >
       {({ isSubmitting, values, handleChange, setFieldValue, resetForm, isValid, dirty }) => (
@@ -117,32 +118,36 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
               )}
             </Field>
           </FormItem>
-          <Subtitle>
-            <FormattedMessage id="preferences.anonymizeUsage" />
-          </Subtitle>
-          <Text>
-            <FormattedMessage
-              id={"preferences.collectData"}
-              values={{
-                docs: (docs: React.ReactNode) => (
-                  <DocsLink target="_blank" href={config.ui.docsLink}>
-                    {docs}
-                  </DocsLink>
-                ),
-              }}
-            />
-          </Text>
-          <FormItem>
-            <Field name="anonymousDataCollection">
-              {({ field }: FieldProps<string>) => (
-                <LabeledSwitch
-                  {...field}
-                  disabled={!values.email}
-                  label={<FormattedMessage id="preferences.anonymizeData" />}
+          {config.segment.enabled && (
+            <>
+              <Subtitle>
+                <FormattedMessage id="preferences.anonymizeUsage" />
+              </Subtitle>
+              <Text>
+                <FormattedMessage
+                  id="preferences.collectData"
+                  values={{
+                    docs: (docs: React.ReactNode) => (
+                      <DocsLink target="_blank" href={links.docsLink}>
+                        {docs}
+                      </DocsLink>
+                    ),
+                  }}
                 />
-              )}
-            </Field>
-          </FormItem>
+              </Text>
+              <FormItem>
+                <Field name="anonymousDataCollection">
+                  {({ field }: FieldProps<string>) => (
+                    <LabeledSwitch
+                      {...field}
+                      disabled={!values.email}
+                      label={<FormattedMessage id="preferences.anonymizeData" />}
+                    />
+                  )}
+                </Field>
+              </FormItem>
+            </>
+          )}
           <Subtitle>
             <FormattedMessage id="preferences.news" />
           </Subtitle>
@@ -183,9 +188,9 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
             />
           ) : (
             <ButtonContainer>
-              <BigButton type="submit" disabled={isSubmitting}>
-                <FormattedMessage id={"form.continue"} />
-              </BigButton>
+              <Button size="lg" type="submit" disabled={isSubmitting}>
+                <FormattedMessage id="form.continue" />
+              </Button>
             </ButtonContainer>
           )}
         </Form>

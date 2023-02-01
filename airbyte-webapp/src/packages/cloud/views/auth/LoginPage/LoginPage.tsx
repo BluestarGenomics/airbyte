@@ -1,32 +1,43 @@
 import { Field, FieldProps, Formik } from "formik";
 import React from "react";
 import { FormattedMessage, useIntl } from "react-intl";
+import { NavigateOptions, To, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 
-import { LabeledInput, Link, LoadingButton } from "components";
-import HeadTitle from "components/HeadTitle";
+import { LabeledInput, Link } from "components";
+import { HeadTitle } from "components/common/HeadTitle";
+import { Button } from "components/ui/Button";
 
-import useRouter from "hooks/useRouter";
-import { CloudRoutes } from "packages/cloud/cloudRoutes";
+import { PageTrackingCodes, useTrackPage } from "hooks/services/Analytics";
+import { useQuery } from "hooks/useQuery";
+import { CloudRoutes } from "packages/cloud/cloudRoutePaths";
 import { FieldError } from "packages/cloud/lib/errors/FieldError";
 import { useAuthService } from "packages/cloud/services/auth/AuthService";
 import { BottomBlock, FieldItem, Form } from "packages/cloud/views/auth/components/FormComponents";
 import { FormTitle } from "packages/cloud/views/auth/components/FormTitle";
+
+import styles from "./LoginPage.module.scss";
+import { OAuthLogin } from "../OAuthLogin";
+import { Separator } from "../SignupPage/components/Separator";
+import { Disclaimer } from "../SignupPage/components/SignupForm";
 
 const LoginPageValidationSchema = yup.object().shape({
   email: yup.string().email("form.email.error").required("form.empty.error"),
   password: yup.string().required("form.empty.error"),
 });
 
-const LoginPage: React.FC = () => {
-  const formatMessage = useIntl().formatMessage;
+export const LoginPage: React.FC = () => {
+  const { formatMessage } = useIntl();
   const { login } = useAuthService();
-  const { query, replace } = useRouter();
+  const query = useQuery<{ from?: string }>();
+  const navigate = useNavigate();
+  const replace = (path: To, state?: NavigateOptions) => navigate(path, { ...state, replace: true });
+  useTrackPage(PageTrackingCodes.LOGIN);
 
   return (
     <div>
       <HeadTitle titles={[{ id: "login.login" }]} />
-      <FormTitle bold>
+      <FormTitle>
         <FormattedMessage id="login.loginTitle" />
       </FormTitle>
 
@@ -86,19 +97,26 @@ const LoginPage: React.FC = () => {
             </FieldItem>
             <BottomBlock>
               <>
-                <Link to={CloudRoutes.ResetPassword} $light data-testid="reset-password-link">
+                <Link
+                  to={CloudRoutes.ResetPassword}
+                  className={styles.forgotPassword}
+                  $light
+                  data-testid="reset-password-link"
+                >
                   <FormattedMessage id="login.forgotPassword" />
                 </Link>
-                <LoadingButton type="submit" isLoading={isSubmitting}>
+                <Button size="lg" type="submit" isLoading={isSubmitting}>
                   <FormattedMessage id="login.login" />
-                </LoadingButton>
+                </Button>
               </>
             </BottomBlock>
           </Form>
         )}
       </Formik>
+
+      <Separator />
+      <OAuthLogin />
+      <Disclaimer />
     </div>
   );
 };
-
-export default LoginPage;

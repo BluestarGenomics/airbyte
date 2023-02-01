@@ -1,36 +1,24 @@
-import { faCalendarAlt } from "@fortawesome/free-regular-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import classNames from "classnames";
 import React from "react";
 import { FormattedRelativeTime } from "react-intl";
-import styled from "styled-components";
 
-const CalendarIcon = styled(FontAwesomeIcon)`
-  color: ${({ theme }) => theme.greyColor40};
-  font-size: 14px;
-  line-height: 14px;
-  margin-right: 5px;
-`;
+import { Text } from "components/ui/Text";
 
-const Content = styled.div<{ enabled?: boolean }>`
-  color: ${({ theme, enabled }) => (!enabled ? theme.greyColor40 : "inheret")};
-`;
+import styles from "./LastSyncCell.module.scss";
 
-type IProps = {
-  timeInSecond: number;
+interface LastSyncCellProps {
+  timeInSeconds?: number | null;
   enabled?: boolean;
-};
+}
 
-const LastSyncCell: React.FC<IProps> = ({ timeInSecond, enabled }) => {
-  if (!timeInSecond) {
-    return null;
-  }
-
+export const LastSyncCell: React.FC<LastSyncCellProps> = ({ timeInSeconds, enabled }) => {
   return (
-    <Content enabled={enabled}>
-      <CalendarIcon icon={faCalendarAlt} />
-      <FormattedRelativeTime value={timeInSecond - Date.now() / 1000} updateIntervalInSeconds={60} />
-    </Content>
+    <>
+      {timeInSeconds ? (
+        <Text className={classNames(styles.text, { [styles.enabled]: enabled })} size="sm">
+          <FormattedRelativeTime value={timeInSeconds - Date.now() / 1000} updateIntervalInSeconds={60} />
+        </Text>
+      ) : null}
+    </>
   );
 };
-
-export default LastSyncCell;

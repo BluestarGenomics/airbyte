@@ -7,7 +7,6 @@ const LogsView = styled.div<{ isEmpty?: boolean }>`
   font-size: 12px;
   line-height: 18px;
   color: ${({ theme }) => theme.darkPrimaryColor};
-  font-family: ${({ theme }) => theme.codeFont};
   word-wrap: break-word;
   min-height: ${({ isEmpty }) => (isEmpty ? "auto" : "400px")};
 
@@ -31,9 +30,9 @@ const LogsView = styled.div<{ isEmpty?: boolean }>`
   }
 `;
 
-type LogsProps = {
+interface LogsProps {
   logsArray?: string[];
-};
+}
 
 const Logs: React.FC<LogsProps> = ({ logsArray }) => {
   const logsJoin = logsArray?.length ? logsArray.join("\n") : "No logs available";
@@ -46,7 +45,7 @@ const Logs: React.FC<LogsProps> = ({ logsArray }) => {
           lineClassName="logLine"
           highlightLineClassName="highlightLogLine"
           selectableLines
-          follow={true}
+          follow
           style={{ background: "transparent" }}
           scrollToLine={undefined}
           highlight={[]}

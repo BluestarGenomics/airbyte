@@ -1,64 +1,62 @@
+import classNames from "classnames";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import styled from "styled-components";
+import * as yup from "yup";
 
-import { Button, LabeledInput, LoadingButton } from "components";
+import { LabeledInput } from "components";
+import { Button } from "components/ui/Button";
 
+import { useTrackPage, PageTrackingCodes } from "hooks/services/Analytics";
 import { useCurrentWorkspace } from "hooks/services/useWorkspace";
 import {
-  useRemoveWorkspace,
-  useUpdateWorkspace,
-  useWorkspaceService,
-} from "packages/cloud/services/workspaces/WorkspacesService";
+  useRemoveCloudWorkspace,
+  useUpdateCloudWorkspace,
+} from "packages/cloud/services/workspaces/CloudWorkspacesService";
 import { Content, SettingsCard } from "pages/SettingsPage/pages/SettingsComponents";
+import { useInvalidateWorkspace, useWorkspaceService } from "services/workspaces/WorkspacesService";
 
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
+import styles from "./WorkspaceSettingsView.module.scss";
 
-const Buttons = styled.div`
-  margin-top: 10px;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
-
-  & > button {
-    margin-left: 5px;
-  }
-`;
+const ValidationSchema = yup.object().shape({
+  name: yup.string().required("form.empty.error"),
+});
 
 export const WorkspaceSettingsView: React.FC = () => {
-  const formatMessage = useIntl().formatMessage;
-
+  const { formatMessage } = useIntl();
+  useTrackPage(PageTrackingCodes.SETTINGS_WORKSPACE);
   const { exitWorkspace } = useWorkspaceService();
   const workspace = useCurrentWorkspace();
-  const removeWorkspace = useRemoveWorkspace();
-  const updateWorkspace = useUpdateWorkspace();
+  const { mutateAsync: removeCloudWorkspace, isLoading: isRemovingCloudWorkspace } = useRemoveCloudWorkspace();
+  const { mutateAsync: updateCloudWorkspace } = useUpdateCloudWorkspace();
+  const invalidateWorkspace = useInvalidateWorkspace(workspace.workspaceId);
 
   return (
     <>
       <SettingsCard
         title={
-          <Header>
+          <div className={styles.header}>
             <FormattedMessage id="settings.generalSettings" />
             <Button type="button" onClick={exitWorkspace} data-testid="button.changeWorkspace">
               <FormattedMessage id="settings.generalSettings.changeWorkspace" />
             </Button>
-          </Header>
+          </div>
         }
       >
         <Formik
-          initialValues={{ name: workspace.name }}
-          onSubmit={async (payload) =>
-            updateWorkspace.mutateAsync({
-              workspaceId: workspace.workspaceId,
+          initialValues={{
+            name: workspace.name,
+          }}
+          onSubmit={async (payload) => {
+            const { workspaceId } = workspace;
+            await updateCloudWorkspace({
+              workspaceId,
               name: payload.name,
-            })
-          }
+            });
+            await invalidateWorkspace();
+          }}
+          enableReinitialize
+          validationSchema={ValidationSchema}
         >
           {({ dirty, isSubmitting, resetForm, isValid }) => (
             <Form>
@@ -77,14 +75,15 @@ export const WorkspaceSettingsView: React.FC = () => {
                     />
                   )}
                 </Field>
-                <Buttons>
-                  <Button type="button" secondary disabled={!dirty} onClick={() => resetForm()}>
-                    cancel
+
+                <div className={classNames(styles.formItem, styles.buttonGroup)}>
+                  <Button type="button" variant="secondary" disabled={!dirty} onClick={() => resetForm()}>
+                    <FormattedMessage id="form.cancel" />
                   </Button>
-                  <LoadingButton type="submit" disabled={!isValid} isLoading={isSubmitting}>
-                    save changes
-                  </LoadingButton>
-                </Buttons>
+                  <Button type="submit" disabled={!dirty || !isValid} isLoading={isSubmitting}>
+                    <FormattedMessage id="form.saveChanges" />
+                  </Button>
+                </div>
               </Content>
             </Form>
           )}
@@ -92,16 +91,16 @@ export const WorkspaceSettingsView: React.FC = () => {
       </SettingsCard>
       <SettingsCard
         title={
-          <Header>
+          <div className={styles.header}>
             <FormattedMessage id="settings.generalSettings.deleteLabel" />
-            <LoadingButton
-              isLoading={removeWorkspace.isLoading}
-              danger
-              onClick={() => removeWorkspace.mutateAsync(workspace.workspaceId)}
+            <Button
+              isLoading={isRemovingCloudWorkspace}
+              variant="danger"
+              onClick={() => removeCloudWorkspace(workspace.workspaceId)}
             >
               <FormattedMessage id="settings.generalSettings.deleteText" />
-            </LoadingButton>
-          </Header>
+            </Button>
+          </div>
         }
       />
     </>

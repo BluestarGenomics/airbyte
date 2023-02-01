@@ -1,21 +1,21 @@
-import { ConnectionSchedule } from "../../core/request/AirbyteClient";
+import { ConnectionScheduleData, ConnectionScheduleType, SchemaChange } from "../../core/request/AirbyteClient";
 
-type EntityTableDataItem = {
+interface EntityTableDataItem {
   entityId: string;
   entityName: string;
   connectorName: string;
-  connectEntities: {
+  connectEntities: Array<{
     name: string;
     connector: string;
     status: string;
     lastSyncStatus: string | null;
-  }[];
+  }>;
   enabled: boolean;
   lastSync?: number | null;
   connectorIcon?: string;
-};
+}
 
-type ITableDataItem = {
+interface ConnectionTableDataItem {
   connectionId: string;
   name: string;
   entityName: string;
@@ -24,16 +24,19 @@ type ITableDataItem = {
   isSyncing?: boolean;
   status?: string;
   lastSync?: number | null;
-  schedule: ConnectionSchedule | undefined;
+  scheduleData?: ConnectionScheduleData;
+  scheduleType?: ConnectionScheduleType;
+  schemaChange: SchemaChange;
   lastSyncStatus: string | null;
   connectorIcon?: string;
   entityIcon?: string;
-};
+}
 
-enum Status {
+const enum Status {
   ACTIVE = "active",
   INACTIVE = "inactive",
   FAILED = "failed",
+  CANCELLED = "cancelled",
   EMPTY = "empty",
   PENDING = "pending",
 }
@@ -43,5 +46,5 @@ enum SortOrderEnum {
   ASC = "asc",
 }
 
-export type { ITableDataItem, EntityTableDataItem };
+export type { ConnectionTableDataItem, EntityTableDataItem };
 export { Status, SortOrderEnum };

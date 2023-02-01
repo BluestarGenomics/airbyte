@@ -1,10 +1,10 @@
-import { Config } from "../../config";
 import { CommonRequestError } from "./CommonRequestError";
 import { RequestMiddleware } from "./RequestMiddleware";
 import { VersionError } from "./VersionError";
+import { AirbyteWebappConfig } from "../../config";
 
 export interface ApiOverrideRequestOptions {
-  config: Pick<Config, "apiUrl">;
+  config: Pick<AirbyteWebappConfig, "apiUrl">;
   middlewares: RequestMiddleware[];
   signal?: RequestInit["signal"];
 }
@@ -51,7 +51,7 @@ export const apiOverride = async <T, U = unknown>(
   const requestUrl = `${apiUrl.replace(/\/v1\/?$/, "")}${url.startsWith("/") ? "" : "/"}${url}`;
 
   for (const middleware of options.middlewares) {
-    headers = (await middleware({ headers })).headers;
+    ({ headers } = await middleware({ headers }));
   }
 
   const response = await fetch(`${requestUrl}${new URLSearchParams(params)}`, {
@@ -104,5 +104,5 @@ async function parseResponse<T>(response: Response, responseType?: "blob"): Prom
     }
   }
 
-  throw new CommonRequestError(response, resultJsonResponse?.message);
+  throw new CommonRequestError(response, resultJsonResponse?.message ?? JSON.stringify(resultJsonResponse?.detail));
 }

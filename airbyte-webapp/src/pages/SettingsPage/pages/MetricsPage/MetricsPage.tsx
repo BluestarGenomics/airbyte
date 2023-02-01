@@ -1,18 +1,20 @@
 import React from "react";
 import { FormattedMessage } from "react-intl";
 
-import HeadTitle from "components/HeadTitle";
+import { HeadTitle } from "components/common/HeadTitle";
 
+import { useTrackPage, PageTrackingCodes } from "hooks/services/Analytics";
 import { useCurrentWorkspace } from "services/workspaces/WorkspacesService";
 
+import MetricsForm from "./components/MetricsForm";
 import useWorkspaceEditor from "../../components/useWorkspaceEditor";
 import { Content, SettingsCard } from "../SettingsComponents";
-import MetricsForm from "./components/MetricsForm";
 
 const MetricsPage: React.FC = () => {
   const workspace = useCurrentWorkspace();
   const { errorMessage, successMessage, loading, updateData } = useWorkspaceEditor();
 
+  useTrackPage(PageTrackingCodes.SETTINGS_METRICS);
   const onChange = async (data: { anonymousDataCollection: boolean }) => {
     await updateData({ ...workspace, ...data, news: !!workspace.news, securityUpdates: !!workspace.securityUpdates });
   };
